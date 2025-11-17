@@ -22,8 +22,7 @@ Implementado con **NestJS**, siguiendo una arquitectura modular y orientada al d
 Aquí se gestionan todas las operaciones del servidor, lógica de negocio, base de datos, validaciones, reportes y notificaciones.
 
 ➡️ **Ver documentación del backend:**  
-`/api/README.md`  
-`/api/docs/architecture-backend.md`
+- [README del backend](./api/README.md)
 
 ---
 
@@ -32,8 +31,8 @@ Construido con **Angular (standalone, Angular 20)** usando componentes independi
 Esta capa se encarga de la interfaz de usuario, flujos de navegación, carga de documentos y visualización de datos.
 
 ➡️ **Ver documentación del frontend:**  
-`/app/README.md`
-
+- [README del frontend](./app/README.md)
+  
 ---
 
 ## 🛠️ Tecnologías utilizadas (visión general)
@@ -53,4 +52,4 @@ Sin entrar en detalle, el sistema se sustenta en:
 
 Este proyecto se distribuye bajo la licencia incluida en este repositorio.  
 Consulta el archivo:  
-`LICENSE`
+➡️ [LICENSE](./LICENSE)
