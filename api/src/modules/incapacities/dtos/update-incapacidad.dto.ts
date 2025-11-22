@@ -2,6 +2,21 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsDateString, IsNumber, IsOptional, IsEnum, Min } from 'class-validator';
 import { EstadoIncapacidad } from '../../../database/entities';
 
+/**
+ * DTO para actualizar una incapacidad existente
+ * 
+ * Estados posibles de una incapacidad:
+ * - REGISTRADA: Incapacidad recién creada, esperando validación inicial
+ * - VALIDANDO: En proceso de validación de documentos y datos
+ * - CORRECCION: Requiere correcciones por parte del empleado
+ * - PENDIENTE_REVISION: Esperando revisión por RRHH
+ * - EN_REVISION: Siendo revisada actualmente por RRHH
+ * - APROBADA: Incapacidad aprobada, autorizada para pago
+ * - RECHAZADA: Incapacidad rechazada por incumplir requisitos
+ * - ESPERANDO_PAGO: Aprobada y en cola de pago
+ * - PAGADA: Pago completado exitosamente
+ * - CERRADA: Proceso finalizado y archivado
+ */
 export class UpdateIncapacidadDto {
   @ApiProperty({
     description: 'Fecha de inicio de la incapacidad',
@@ -46,7 +61,18 @@ export class UpdateIncapacidadDto {
   monto_solicitado?: number;
 
   @ApiProperty({
-    description: 'Estado de la incapacidad',
+    description: `Estado de la incapacidad. Valores posibles:
+    
+• REGISTRADA - Incapacidad recién creada, esperando validación inicial
+• VALIDANDO - En proceso de validación de documentos y datos
+• CORRECCION - Requiere correcciones por parte del empleado
+• PENDIENTE_REVISION - Esperando revisión por RRHH
+• EN_REVISION - Siendo revisada actualmente por RRHH
+• APROBADA - Incapacidad aprobada, autorizada para pago
+• RECHAZADA - Incapacidad rechazada por incumplir requisitos
+• ESPERANDO_PAGO - Aprobada y en cola de pago
+• PAGADA - Pago completado exitosamente
+• CERRADA - Proceso finalizado y archivado`,
     enum: EstadoIncapacidad,
     example: EstadoIncapacidad.EN_REVISION,
     required: false,

@@ -35,10 +35,12 @@ async function bootstrap() {
     .setVersion('1.0')
     .addTag('auth', 'Autenticación y autorización')
     .addTag('users', 'Gestión de usuarios')
-    .addTag('incapacities', 'Gestión de incapacidades')
+    .addTag('incapacidades', 'Gestión de incapacidades')
     .addTag('documents', 'Gestión de documentos')
-    .addTag('notifications', 'Gestión de notificaciones')
     .addTag('reports', 'Generación de reportes')
+    .addTag('Empresas', 'Gestión de empresas')
+    .addTag('email', 'Servicio de correo electrónico')
+    .addTag('health', 'Estado del servidor')
     .addBearerAuth(
       {
         type: 'http',

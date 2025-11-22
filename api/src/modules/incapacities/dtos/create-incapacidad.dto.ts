@@ -1,6 +1,21 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsNotEmpty, IsDateString, IsNumber, IsOptional, Min } from 'class-validator';
 
+/**
+ * DTO para crear una nueva incapacidad
+ * 
+ * Estados posibles de una incapacidad en el sistema:
+ * - REGISTRADA: Incapacidad recién creada, esperando validación inicial
+ * - VALIDANDO: En proceso de validación de documentos y datos
+ * - CORRECCION: Requiere correcciones por parte del empleado
+ * - PENDIENTE_REVISION: Esperando revisión por RRHH
+ * - EN_REVISION: Siendo revisada actualmente por RRHH
+ * - APROBADA: Incapacidad aprobada, autorizada para pago
+ * - RECHAZADA: Incapacidad rechazada por incumplir requisitos
+ * - ESPERANDO_PAGO: Aprobada y en cola de pago
+ * - PAGADA: Pago completado exitosamente
+ * - CERRADA: Proceso finalizado y archivado
+ */
 export class CreateIncapacidadDto {
   @ApiProperty({
     description: 'ID del usuario que registra la incapacidad',
