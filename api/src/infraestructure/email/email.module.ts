@@ -1,10 +1,16 @@
 import { Module } from '@nestjs/common';
 import { EmailService } from './email.service';
 import { EmailController } from './email.controller';
+import { ReportesService } from './reportes.service';
+import { EmpresasModule } from '../../modules/empresas/empresas.module';
+import { IncapacitiesModule } from '../../modules/incapacities/incapacities.module';
+import { DocumentsModule } from '../../modules/documents/documents.module';
+import { FileStorageModule } from '../file-storage/file-storage.module';
 
 @Module({
-  providers: [EmailService],
+  imports: [EmpresasModule, IncapacitiesModule, DocumentsModule, FileStorageModule],
+  providers: [EmailService, ReportesService],
   controllers: [EmailController],
-  exports: [EmailService],
+  exports: [EmailService, ReportesService],
 })
 export class EmailModule {}

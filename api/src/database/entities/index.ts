@@ -11,6 +11,7 @@ export * from './incapacidad.entity';
 export * from './documento.entity';
 export * from './pago.entity';
 export * from './notificacion.entity';
+export * from './password-reset.entity';
 
 // Entidades auxiliares
 export * from './empresa.entity';
