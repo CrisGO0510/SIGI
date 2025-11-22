@@ -16,6 +16,9 @@ import {
 } from '@nestjs/swagger';
 import { AuthService } from '../services/auth.service';
 import { LoginDto, RegisterDto } from '../dtos';
+import { SolicitarRecuperacionDto } from '../dtos/solicitar-recuperacion.dto';
+import { ValidarCodigoDto } from '../dtos/validar-codigo.dto';
+import { CambiarPasswordDto } from '../dtos/cambiar-password.dto';
 import { AuthGuard } from '../../../common/guards/auth.guard';
 import { CurrentUser } from '../../../common/decorators/current-user.decorator';
 import { Public } from '../../../common/decorators/public.decorator';
@@ -211,6 +214,42 @@ curl -X GET http://localhost:3005/auth/me \\
   @ApiResponse({ status: 401, description: 'Token inválido' })
   async refreshToken(@CurrentUser('id') userId: string) {
     return this.authService.refreshToken(userId);
+  }
+
+  /**
+   * POST /auth/recuperar-password/solicitar
+   * Solicitar código de recuperación por email (público)
+   */
+  @Public()
+  @Post('recuperar-password/solicitar')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Solicitar código de recuperación por email' })
+  async solicitarRecuperacion(@Body() body: SolicitarRecuperacionDto) {
+    return this.authService.requestPasswordReset(body.email);
+  }
+
+  /**
+   * POST /auth/recuperar-password/validar
+   * Validar el código recibido por email. Devuelve un token temporal (hash).
+   */
+  @Public()
+  @Post('recuperar-password/validar')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Validar código de recuperación' })
+  async validarCodigo(@Body() body: ValidarCodigoDto) {
+    return this.authService.validateVerificationCode(body.email, body.codigo);
+  }
+
+  /**
+   * POST /auth/recuperar-password/cambiar
+   * Cambiar la contraseña usando el token recibido tras validar el código
+   */
+  @Public()
+  @Post('recuperar-password/cambiar')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Cambiar contraseña con token' })
+  async cambiarPassword(@Body() body: CambiarPasswordDto) {
+    return this.authService.resetPasswordWithToken(body.token, body.newPassword);
   }
 
   /**
