@@ -1,0 +1,26 @@
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.app-body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+app-sidebar {
+  width: 260px;
+  background-color: #1c1f26;
+  color: #fff;
+  height: calc(100vh - 64px);
+  overflow-y: auto;
+}
+
+.app-content {
+  flex: 1;
+  padding: 1.5rem;
+  overflow-y: auto;
+  background: #f5f6fa;
+}

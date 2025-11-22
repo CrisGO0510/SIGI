@@ -1,11 +1,10 @@
 import { Component } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @Component({
-  selector: 'app-login',
-  imports: [],
+  standalone: true,
   templateUrl: './login.html',
-  styleUrl: './login.scss',
+  styleUrls: ['./login.scss'],
+  imports: [ReactiveFormsModule],
 })
-export class Login {
-
-}
+export class LoginComponent {}

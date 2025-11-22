@@ -1,16 +1,15 @@
-import { provideHttpClient, withInterceptors } from "@angular/common/http";
-import { authInterceptor } from "./interceptors/auth-interceptor";
-import { errorInterceptor } from "./interceptors/error-interceptor";
-import { UserService } from "./services/user";
-import { ApiService } from "./services/api";
-import { NotificationsService } from "./services/notifications";
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { authInterceptor } from './interceptors/auth-interceptor';
+import { errorInterceptor } from './interceptors/error-interceptor';
+import { UserService } from './services/user';
+import { ApiService } from './services/api';
+import { StorageService } from './services/storage';
+import { NotificationService } from './services/notifications';
 
 export const CORE_PROVIDERS = [
-  provideHttpClient(withInterceptors([
-    authInterceptor,
-    errorInterceptor
-  ])),
+  provideHttpClient(withInterceptors([authInterceptor, errorInterceptor])),
   UserService,
   ApiService,
-  NotificationsService,
+  StorageService,
+  NotificationService,
 ];
