@@ -5,10 +5,11 @@ import { AppService } from './app.service';
 import { SupabaseModule } from './infraestructure/external-apis/supabase';
 import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
+import { IncapacitiesModule } from './modules/incapacities/incapacities.module';
 import { AuthGuard } from './common/guards/auth.guard';
 
 @Module({
-  imports: [SupabaseModule, AuthModule, UsersModule],
+  imports: [SupabaseModule, AuthModule, UsersModule, IncapacitiesModule],
   controllers: [AppController],
   providers: [
     AppService,
