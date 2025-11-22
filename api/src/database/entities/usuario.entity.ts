@@ -10,6 +10,7 @@ export interface Usuario {
   email: string;
   password_encrypted: string;
   rol: Rol;
+  empresa_id: string; // FK a tabla empresas (OBLIGATORIO)
   telefono?: string;
   last_login?: Date;
   created_at?: Date;

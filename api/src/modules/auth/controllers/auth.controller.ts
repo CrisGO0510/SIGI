@@ -79,7 +79,43 @@ Retorna un \`access_token\` que debes usar en los demás endpoints protegidos.
   @Public()
   @Post('register')
   @HttpCode(HttpStatus.CREATED)
-  @ApiOperation({ summary: 'Registrar nuevo usuario' })
+  @ApiOperation({ 
+    summary: 'Registrar nuevo usuario',
+    description: `
+**Endpoint público - No requiere autenticación**
+
+Crea un nuevo usuario en el sistema. Debes especificar uno de los siguientes roles:
+
+**Roles disponibles:**
+- \`EMPLEADO\` - Usuario regular que puede reportar incapacidades
+- \`RRHH\` - Personal de Recursos Humanos con permisos de gestión
+- \`ADMIN\` - Administrador con acceso completo al sistema
+
+**⚠️ Campo obligatorio:**
+- \`empresa_id\` - Debes proporcionar un UUID válido de una empresa existente
+
+**Ejemplo de request:**
+\`\`\`bash
+# 1. Primero obtén el ID de una empresa (requiere token de ADMIN o RRHH)
+curl -X GET http://localhost:3005/empresas \\
+  -H "Authorization: Bearer tu-token-admin"
+
+# 2. Luego registra el usuario con el empresa_id
+curl -X POST http://localhost:3005/auth/register \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "nombre": "Juan Pérez",
+    "email": "juan@example.com",
+    "password": "password123",
+    "rol": "EMPLEADO",
+    "empresa_id": "550e8400-e29b-41d4-a716-446655440000"
+  }'
+\`\`\`
+
+**Respuesta:**
+Retorna un \`access_token\` que puedes usar inmediatamente en los demás endpoints protegidos.
+    `,
+  })
   @ApiBody({ type: RegisterDto })
   @ApiResponse({
     status: 201,
@@ -97,6 +133,7 @@ Retorna un \`access_token\` que debes usar en los demás endpoints protegidos.
     },
   })
   @ApiResponse({ status: 409, description: 'El email ya está registrado' })
+  @ApiResponse({ status: 404, description: 'La empresa especificada no existe' })
   @ApiResponse({ status: 400, description: 'Datos de entrada inválidos' })
   async register(@Body() registerDto: RegisterDto) {
     return this.authService.register(registerDto);
