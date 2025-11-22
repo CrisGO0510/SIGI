@@ -1,0 +1,85 @@
+<div class="register-container">
+  <mat-card class="register-card">
+    <h1 class="title">Crear cuenta</h1>
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <!-- Nombre -->
+      <mat-form-field appearance="outline" class="full">
+        <mat-label>Nombre completo</mat-label>
+        <input matInput formControlName="nombre" />
+        <mat-icon matSuffix>person</mat-icon>
+
+        @if (form.get("nombre")?.hasError("required")) {
+          <mat-error>El nombre es obligatorio</mat-error>
+        }
+      </mat-form-field>
+
+      <!-- Email -->
+      <mat-form-field appearance="outline" class="full">
+        <mat-label>Correo electrónico</mat-label>
+        <input matInput formControlName="email" />
+        <mat-icon matSuffix>mail</mat-icon>
+
+        @if (form.get("email")?.hasError("required")) {
+          <mat-error>El correo es obligatorio</mat-error>
+        } @else if (form.get("email")?.hasError("email")) {
+          <mat-error>Correo inválido</mat-error>
+        }
+      </mat-form-field>
+
+      <!-- Password -->
+      <mat-form-field appearance="outline" class="full">
+        <mat-label>Contraseña</mat-label>
+        <input matInput type="password" formControlName="password" />
+        <mat-icon matSuffix>lock</mat-icon>
+
+        @if (form.get("password")?.hasError("required")) {
+          <mat-error>La contraseña es obligatoria</mat-error>
+        }
+      </mat-form-field>
+
+      <!-- Rol -->
+      <mat-form-field appearance="outline" class="full">
+        <mat-label>Rol</mat-label>
+        <mat-select formControlName="rol">
+          @for (r of roles; track r) {
+            <mat-option [value]="r">{{ r }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <!-- Empresa ID -->
+      <mat-form-field appearance="outline" class="full">
+        <mat-label>ID de empresa</mat-label>
+        <input matInput formControlName="empresa_id" />
+        <mat-icon matSuffix>domain</mat-icon>
+
+        @if (form.get("empresa_id")?.hasError("required")) {
+          <mat-error>Debes especificar una empresa válida</mat-error>
+        }
+      </mat-form-field>
+
+      <!-- Error -->
+      @if (errorMsg) {
+        <div class="error">
+          <mat-icon>error</mat-icon>
+          {{ errorMsg }}
+        </div>
+      }
+
+      <!-- Botón -->
+      <button
+        mat-raised-button
+        color="primary"
+        class="full"
+        [disabled]="form.invalid || loading"
+      >
+        @if (loading) {
+          <mat-spinner diameter="20"></mat-spinner>
+        } @else {
+          <span>Registrarme</span>
+        }
+      </button>
+    </form>
+  </mat-card>
+</div>

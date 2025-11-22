@@ -6,10 +6,7 @@ export const AUTH_ROUTES: Routes = [
     loadComponent: () => import('./login/login').then((c) => c.LoginComponent),
   },
   {
-    path: 'forgot-password',
-    loadComponent: () =>
-      import('./forgot-password/forgot-password').then(
-        (c) => c.ForgotPassword,
-      ),
+    path: 'register',
+    loadComponent: () => import('./register/register').then((c) => c.Register),
   },
 ];

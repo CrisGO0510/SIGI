@@ -11,10 +11,8 @@
 
         @if (form.get("email")?.hasError("required")) {
           <mat-error>El correo es obligatorio</mat-error>
-        }
-
-        @if (form.get("email")?.hasError("email")) {
-          <mat-error>Formato inválido</mat-error>
+        } @else if (form.get("email")?.hasError("email")) {
+          <mat-error>Formato de correo inválido</mat-error>
         }
       </mat-form-field>
 
@@ -29,21 +27,25 @@
         }
       </mat-form-field>
 
+      <!-- Error del backend -->
+      @if (errorMsg) {
+        <div class="error">
+          <mat-icon>error</mat-icon>
+          {{ errorMsg }}
+        </div>
+      }
+
       <button
         mat-raised-button
         color="primary"
         class="full"
         [disabled]="form.invalid || loading"
       >
-        @if (!loading) {
-          <mat-icon>login</mat-icon>
-        }
-
         @if (loading) {
           <mat-spinner diameter="20"></mat-spinner>
+        } @else {
+          <span>Iniciar sesión</span>
         }
-
-        {{ loading ? "Ingresando..." : "Iniciar sesión" }}
       </button>
     </form>
   </mat-card>
