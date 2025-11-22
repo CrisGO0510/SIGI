@@ -267,4 +267,175 @@ export class EmailService {
       text: `Hola ${nombre}, tu cuenta SIGI ha sido creada exitosamente. Tu rol es: ${rol}.`,
     });
   }
+
+  /**
+   * Envía reporte de incapacidades de empleados a la empresa
+   */
+  async sendReporteEmpresa(
+    emailEmpresa: string,
+    nombreEmpresa: string,
+    periodo: { inicio: string; fin: string },
+    incapacidades: Array<{
+      empleado: string;
+      motivo: string;
+      fechaInicio: string;
+      fechaFin: string;
+      dias: number;
+      estado: string;
+      monto?: number;
+      documentoUrl?: string;
+    }>,
+    estadisticas: {
+      total: number;
+      aprobadas: number;
+      rechazadas: number;
+      pendientes: number;
+      montoTotal: number;
+    },
+  ): Promise<EmailResult> {
+    // Generar tabla HTML con las incapacidades
+    const filasIncapacidades = incapacidades
+      .map(
+        (inc) => `
+        <tr>
+          <td style="padding: 10px; border-bottom: 1px solid #ddd;">${inc.empleado}</td>
+          <td style="padding: 10px; border-bottom: 1px solid #ddd;">${inc.motivo}</td>
+          <td style="padding: 10px; border-bottom: 1px solid #ddd;">${inc.fechaInicio}</td>
+          <td style="padding: 10px; border-bottom: 1px solid #ddd;">${inc.fechaFin}</td>
+          <td style="padding: 10px; border-bottom: 1px solid #ddd; text-align: center;">${inc.dias}</td>
+          <td style="padding: 10px; border-bottom: 1px solid #ddd;">
+            <span style="padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; 
+              ${inc.estado === 'APROBADA' ? 'background-color: #4CAF50; color: white;' : 
+                inc.estado === 'RECHAZADA' ? 'background-color: #f44336; color: white;' : 
+                'background-color: #FFC107; color: black;'}">
+              ${inc.estado}
+            </span>
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #ddd; text-align: right;">
+            ${inc.monto ? '$' + inc.monto.toLocaleString('es-PA') : 'N/A'}
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #ddd; text-align: center;">
+            ${inc.documentoUrl 
+              ? `<a href="${inc.documentoUrl}" target="_blank" style="color: #667eea; text-decoration: none; font-weight: bold;">📄 Ver</a>` 
+              : '<span style="color: #999;">Sin documento</span>'}
+          </td>
+        </tr>
+      `,
+      )
+      .join('');
+
+    const html = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <style>
+          body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+          .container { max-width: 900px; margin: 0 auto; padding: 20px; }
+          .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+          .content { padding: 30px; background-color: #f9f9f9; }
+          .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 20px 0; }
+          .stat-card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: center; }
+          .stat-number { font-size: 32px; font-weight: bold; color: #667eea; margin: 10px 0; }
+          .stat-label { color: #666; font-size: 14px; text-transform: uppercase; }
+          .table-container { overflow-x: auto; margin: 20px 0; }
+          table { width: 100%; border-collapse: collapse; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+          th { background-color: #667eea; color: white; padding: 12px; text-align: left; font-weight: bold; }
+          .footer { text-align: center; padding: 20px; font-size: 12px; color: #666; background: #e9ecef; border-radius: 0 0 10px 10px; }
+          .period { background: #e3f2fd; padding: 15px; border-radius: 8px; margin: 20px 0; text-align: center; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <h1>📊 Reporte de Incapacidades</h1>
+            <h2>${nombreEmpresa}</h2>
+          </div>
+          
+          <div class="content">
+            <div class="period">
+              <strong>📅 Período del Reporte:</strong> ${periodo.inicio} al ${periodo.fin}
+            </div>
+
+            <h3 style="color: #667eea; margin-top: 30px;">📈 Resumen Estadístico</h3>
+            
+            <div class="stats-grid">
+              <div class="stat-card">
+                <div class="stat-label">Total Incapacidades</div>
+                <div class="stat-number">${estadisticas.total}</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">Aprobadas</div>
+                <div class="stat-number" style="color: #4CAF50;">${estadisticas.aprobadas}</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">Rechazadas</div>
+                <div class="stat-number" style="color: #f44336;">${estadisticas.rechazadas}</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">Pendientes</div>
+                <div class="stat-number" style="color: #FFC107;">${estadisticas.pendientes}</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">Monto Total</div>
+                <div class="stat-number" style="font-size: 24px;">$${estadisticas.montoTotal.toLocaleString('es-PA')}</div>
+              </div>
+            </div>
+
+            <h3 style="color: #667eea; margin-top: 30px;">📋 Detalle de Incapacidades</h3>
+            
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Empleado</th>
+                    <th>Motivo</th>
+                    <th>Fecha Inicio</th>
+                    <th>Fecha Fin</th>
+                    <th style="text-align: center;">Días</th>
+                    <th>Estado</th>
+                    <th style="text-align: right;">Monto</th>
+                    <th style="text-align: center;">Documento</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${filasIncapacidades}
+                </tbody>
+              </table>
+            </div>
+
+            ${incapacidades.length === 0 ? '<p style="text-align: center; padding: 30px; color: #666;">No se encontraron incapacidades en el período seleccionado.</p>' : ''}
+          </div>
+          
+          <div class="footer">
+            <p><strong>SIGI - Sistema de Gestión de Incapacidades</strong></p>
+            <p>Este es un correo automático generado el ${new Date().toLocaleString('es-PA')}</p>
+            <p>Por favor, no respondas a este mensaje.</p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+
+    const textoPlano = `
+Reporte de Incapacidades - ${nombreEmpresa}
+Período: ${periodo.inicio} al ${periodo.fin}
+
+RESUMEN:
+- Total: ${estadisticas.total}
+- Aprobadas: ${estadisticas.aprobadas}
+- Rechazadas: ${estadisticas.rechazadas}
+- Pendientes: ${estadisticas.pendientes}
+- Monto Total: $${estadisticas.montoTotal.toLocaleString('es-PA')}
+
+DETALLE:
+${incapacidades.map((inc) => `- ${inc.empleado}: ${inc.motivo} (${inc.fechaInicio} - ${inc.fechaFin}) - ${inc.estado}`).join('\n')}
+    `;
+
+    return this.sendEmail({
+      to: emailEmpresa,
+      subject: `Reporte de Incapacidades - ${nombreEmpresa} (${periodo.inicio} al ${periodo.fin})`,
+      html,
+      text: textoPlano,
+    });
+  }
 }
