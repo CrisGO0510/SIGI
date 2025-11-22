@@ -4,6 +4,12 @@
 
 Este endpoint permite enviar reportes estadísticos de incapacidades a **todas las empresas registradas** en el sistema de forma masiva. Cada empresa recibirá un reporte personalizado con las incapacidades de sus propios empleados.
 
+**Cada reporte incluye:**
+- Resumen estadístico (total, aprobadas, rechazadas, pendientes, monto total)
+- **3 gráficos visuales** (distribución por estado, tendencia mensual, evolución de montos)
+- Tabla detallada con todas las incapacidades
+- Enlaces a documentos adjuntos
+
 ## Endpoint
 
 ```

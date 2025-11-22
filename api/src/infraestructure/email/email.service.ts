@@ -269,6 +269,199 @@ export class EmailService {
   }
 
   /**
+   * Genera URL de gráfico de pie para estados de incapacidades
+   */
+  private generatePieChartUrl(estadisticas: {
+    aprobadas: number;
+    rechazadas: number;
+    pendientes: number;
+  }): string {
+    const chart = {
+      type: 'pie',
+      data: {
+        labels: ['Aprobadas', 'Rechazadas', 'Pendientes'],
+        datasets: [
+          {
+            data: [
+              estadisticas.aprobadas,
+              estadisticas.rechazadas,
+              estadisticas.pendientes,
+            ],
+            backgroundColor: ['#4CAF50', '#f44336', '#FFC107'],
+          },
+        ],
+      },
+      options: {
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: {
+              font: {
+                size: 14,
+              },
+            },
+          },
+          title: {
+            display: true,
+            text: 'Distribución por Estado',
+            font: {
+              size: 18,
+              weight: 'bold',
+            },
+          },
+        },
+      },
+    };
+
+    const chartJson = encodeURIComponent(JSON.stringify(chart));
+    return `https://quickchart.io/chart?width=500&height=300&c=${chartJson}`;
+  }
+
+  /**
+   * Genera URL de gráfico de barras para incapacidades por mes
+   */
+  private generateBarChartUrl(incapacidades: Array<{ fechaInicio: string }>): string {
+    // Agrupar incapacidades por mes
+    const incapacidadesPorMes: { [key: string]: number } = {};
+    
+    incapacidades.forEach((inc) => {
+      const fecha = inc.fechaInicio.split('/'); // formato: DD/MM/YYYY
+      const mes = fecha[1]; // Obtener mes
+      const año = fecha[2]; // Obtener año
+      const mesAño = `${mes}/${año}`;
+      
+      incapacidadesPorMes[mesAño] = (incapacidadesPorMes[mesAño] || 0) + 1;
+    });
+
+    // Ordenar por fecha y obtener últimos 6 meses
+    const mesesOrdenados = Object.keys(incapacidadesPorMes)
+      .sort((a, b) => {
+        const [mesA, añoA] = a.split('/').map(Number);
+        const [mesB, añoB] = b.split('/').map(Number);
+        return añoA === añoB ? mesA - mesB : añoA - añoB;
+      })
+      .slice(-6);
+
+    const datos = mesesOrdenados.map((mes) => incapacidadesPorMes[mes]);
+
+    const chart = {
+      type: 'bar',
+      data: {
+        labels: mesesOrdenados,
+        datasets: [
+          {
+            label: 'Incapacidades',
+            data: datos,
+            backgroundColor: '#667eea',
+          },
+        ],
+      },
+      options: {
+        plugins: {
+          legend: {
+            display: false,
+          },
+          title: {
+            display: true,
+            text: 'Incapacidades por Mes',
+            font: {
+              size: 18,
+              weight: 'bold',
+            },
+          },
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              stepSize: 1,
+            },
+          },
+        },
+      },
+    };
+
+    const chartJson = encodeURIComponent(JSON.stringify(chart));
+    return `https://quickchart.io/chart?width=600&height=300&c=${chartJson}`;
+  }
+
+  /**
+   * Genera URL de gráfico de línea para montos por mes
+   */
+  private generateLineChartUrl(
+    incapacidades: Array<{ fechaInicio: string; monto?: number; estado: string }>
+  ): string {
+    // Agrupar montos aprobados por mes
+    const montosPorMes: { [key: string]: number } = {};
+    
+    incapacidades
+      .filter((inc) => inc.estado === 'APROBADA' && inc.monto)
+      .forEach((inc) => {
+        const fecha = inc.fechaInicio.split('/');
+        const mes = fecha[1];
+        const año = fecha[2];
+        const mesAño = `${mes}/${año}`;
+        
+        montosPorMes[mesAño] = (montosPorMes[mesAño] || 0) + (inc.monto || 0);
+      });
+
+    const mesesOrdenados = Object.keys(montosPorMes)
+      .sort((a, b) => {
+        const [mesA, añoA] = a.split('/').map(Number);
+        const [mesB, añoB] = b.split('/').map(Number);
+        return añoA === añoB ? mesA - mesB : añoA - añoB;
+      })
+      .slice(-6);
+
+    const datos = mesesOrdenados.map((mes) => montosPorMes[mes]);
+
+    const chart = {
+      type: 'line',
+      data: {
+        labels: mesesOrdenados,
+        datasets: [
+          {
+            label: 'Monto Total (COP)',
+            data: datos,
+            borderColor: '#4CAF50',
+            backgroundColor: 'rgba(76, 175, 80, 0.1)',
+            fill: true,
+            tension: 0.4,
+          },
+        ],
+      },
+      options: {
+        plugins: {
+          title: {
+            display: true,
+            text: 'Montos Aprobados por Mes',
+            font: {
+              size: 18,
+              weight: 'bold',
+            },
+          },
+          legend: {
+            display: false,
+          },
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              callback: function(value: any) {
+                return '$' + value.toLocaleString('es-CO');
+              },
+            },
+          },
+        },
+      },
+    };
+
+    const chartJson = encodeURIComponent(JSON.stringify(chart));
+    return `https://quickchart.io/chart?width=600&height=300&c=${chartJson}`;
+  }
+
+  /**
    * Envía reporte de incapacidades de empleados a la empresa
    */
   async sendReporteEmpresa(
@@ -324,6 +517,11 @@ export class EmailService {
       )
       .join('');
 
+    // Generar URLs de gráficos
+    const pieChartUrl = this.generatePieChartUrl(estadisticas);
+    const barChartUrl = this.generateBarChartUrl(incapacidades);
+    const lineChartUrl = this.generateLineChartUrl(incapacidades);
+
     const html = `
       <!DOCTYPE html>
       <html>
@@ -342,6 +540,10 @@ export class EmailService {
           th { background-color: #667eea; color: white; padding: 12px; text-align: left; font-weight: bold; }
           .footer { text-align: center; padding: 20px; font-size: 12px; color: #666; background: #e9ecef; border-radius: 0 0 10px 10px; }
           .period { background: #e3f2fd; padding: 15px; border-radius: 8px; margin: 20px 0; text-align: center; }
+          .charts-section { margin: 30px 0; }
+          .chart-container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin: 20px 0; text-align: center; }
+          .chart-container img { max-width: 100%; height: auto; border-radius: 8px; }
+          .charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin: 20px 0; }
         </style>
       </head>
       <body>
@@ -380,6 +582,25 @@ export class EmailService {
                 <div class="stat-number" style="font-size: 24px;">$${estadisticas.montoTotal.toLocaleString('es-PA')}</div>
               </div>
             </div>
+
+            ${incapacidades.length > 0 ? `
+            <div class="charts-section">
+              <h3 style="color: #667eea; margin-top: 30px;">📊 Gráficos Estadísticos</h3>
+              
+              <div class="chart-container">
+                <img src="${pieChartUrl}" alt="Distribución por Estado" />
+              </div>
+
+              <div class="charts-grid">
+                <div class="chart-container">
+                  <img src="${barChartUrl}" alt="Incapacidades por Mes" />
+                </div>
+                <div class="chart-container">
+                  <img src="${lineChartUrl}" alt="Montos Aprobados por Mes" />
+                </div>
+              </div>
+            </div>
+            ` : ''}
 
             <h3 style="color: #667eea; margin-top: 30px;">📋 Detalle de Incapacidades</h3>
             

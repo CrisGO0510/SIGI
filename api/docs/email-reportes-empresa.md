@@ -67,7 +67,31 @@ Muestra en formato de tarjetas:
 - Solicitudes pendientes (amarillo)
 - Monto total de incapacidades aprobadas
 
-### 3. Tabla Detallada
+### 3. Gráficos Estadísticos Visuales 📊
+**Tres gráficos interactivos generados automáticamente:**
+
+**a) Gráfico de Pie - Distribución por Estado**
+- Muestra la proporción de incapacidades aprobadas, rechazadas y pendientes
+- Colores: Verde (aprobadas), Rojo (rechazadas), Amarillo (pendientes)
+- Tamaño: 500x300px
+
+**b) Gráfico de Barras - Incapacidades por Mes**
+- Muestra el número de incapacidades registradas por mes
+- Últimos 6 meses de datos
+- Color: Púrpura (#667eea)
+- Tamaño: 600x300px
+
+**c) Gráfico de Línea - Montos Aprobados por Mes**
+- Muestra la evolución de los montos aprobados a lo largo del tiempo
+- Solo incluye incapacidades aprobadas
+- Últimos 6 meses de datos
+- Color: Verde con relleno transparente
+- Formato de valores: COP (Pesos Colombianos)
+- Tamaño: 600x300px
+
+*Los gráficos se generan usando QuickChart API, una solución serverless que no requiere instalación de dependencias adicionales.*
+
+### 4. Tabla Detallada
 Tabla responsive con las siguientes columnas:
 - Empleado (nombre completo)
 - Motivo de la incapacidad
@@ -87,7 +111,7 @@ El documento muestra:
 - 📄 **Ver** (enlace clickeable si existe documento)
 - **Sin documento** (texto gris si no hay documento adjunto)
 
-### 4. Footer
+### 5. Footer
 - Mensaje de que es un correo automático
 - Logo/nombre del sistema SIGI
 
@@ -249,6 +273,41 @@ MAIL_FROM_NAME=Sistema SIGI
 MAIL_FROM_EMAIL=noreply@sigi.com
 ```
 
+### Gráficos Estadísticos
+
+**Tecnología utilizada:** QuickChart API (https://quickchart.io)
+- Servicio gratuito y sin límites para gráficos estáticos
+- No requiere instalación de dependencias adicionales
+- Genera imágenes de gráficos desde URLs
+- Compatible con todos los clientes de email
+
+**Tipos de gráficos incluidos:**
+
+1. **Gráfico de Pie (Pastel):**
+   - Propósito: Mostrar la proporción de estados
+   - Datos: Aprobadas, Rechazadas, Pendientes
+   - Colores: Verde (#4CAF50), Rojo (#f44336), Amarillo (#FFC107)
+   - Leyenda: Posición inferior
+
+2. **Gráfico de Barras:**
+   - Propósito: Tendencia de incapacidades en el tiempo
+   - Datos: Últimos 6 meses
+   - Eje Y: Número de incapacidades (incrementos de 1)
+   - Color: Púrpura (#667eea)
+
+3. **Gráfico de Línea:**
+   - Propósito: Evolución de montos aprobados
+   - Datos: Solo incapacidades aprobadas, últimos 6 meses
+   - Eje Y: Montos en COP con formato $X,XXX,XXX
+   - Estilo: Línea verde con área rellena transparente
+   - Curva suavizada (tension: 0.4)
+
+**Comportamiento:**
+- Los gráficos solo se muestran si hay incapacidades en el período
+- Si no hay datos suficientes, los gráficos se ajustan automáticamente
+- Las imágenes se cargan directamente en el email (no como adjuntos)
+- Compatible con modo oscuro y clientes de email modernos
+
 ### Límites y Restricciones
 - El email incluye todas las incapacidades que coincidan con los filtros
 - Para reportes muy grandes (>1000 incapacidades), considerar usar paginación o exportación a archivo
@@ -334,6 +393,21 @@ async enviarReportesMensuales() {
 │  ⏳ Pendientes│   4 solicitudes          │
 │  💰 Monto    │  $12,500,000 COP         │
 └─────────────────────────────────────────┘
+
+📊 Gráficos Estadísticos
+┌─────────────────────────────────────────┐
+│      [Gráfico de Pie]                   │
+│   Distribución por Estado               │
+│   ● Aprobadas: 84%                      │
+│   ● Rechazadas: 7%                      │
+│   ● Pendientes: 9%                      │
+└─────────────────────────────────────────┘
+
+┌──────────────────┐  ┌──────────────────┐
+│ [Gráfico Barras] │  │ [Gráfico Línea]  │
+│ Incapacidades    │  │ Montos Aprobados │
+│ por Mes          │  │ por Mes          │
+└──────────────────┘  └──────────────────┘
 
 ┌──────────────────────────────────────────────────────────────────────────┐
 │ Empleado    │ Motivo  │ Inicio   │ Fin      │ Días │ Estado│ Monto    │ Doc     │
