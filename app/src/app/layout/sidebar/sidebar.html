@@ -1,8 +1,21 @@
-<nav class="sidebar">
-  <ul>
-    <li routerLink="/dashboard" routerLinkActive="active">Dashboard</li>
-    <li routerLink="/incapacities" routerLinkActive="active">Incapacidades</li>
-    <li routerLink="/documents" routerLinkActive="active">Documentos</li>
-    <li routerLink="/reports" routerLinkActive="active">Reportes</li>
-  </ul>
-</nav>
+<mat-nav-list class="sidebar-list">
+  <a mat-list-item routerLink="/dashboard" routerLinkActive="active">
+    <mat-icon matListIcon>dashboard</mat-icon>
+    <span>Dashboard</span>
+  </a>
+
+  <a mat-list-item routerLink="/incapacities" routerLinkActive="active">
+    <mat-icon matListIcon>assignment</mat-icon>
+    <span>Incapacidades</span>
+  </a>
+
+  <a mat-list-item routerLink="/documents" routerLinkActive="active">
+    <mat-icon matListIcon>folder</mat-icon>
+    <span>Documentos</span>
+  </a>
+
+  <a mat-list-item routerLink="/reports" routerLinkActive="active">
+    <mat-icon matListIcon>assessment</mat-icon>
+    <span>Reportes</span>
+  </a>
+</mat-nav-list>

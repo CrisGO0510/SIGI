@@ -1,7 +1,14 @@
-<header class="header">
-  <div class="logo">SIGI</div>
-  <div class="header-actions">
-    <!-- Aquí van: perfil, logout, notificaciones -->
-    <span class="user-info">Usuario</span>
-  </div>
-</header>
+<mat-toolbar color="primary" class="header">
+  <span class="app-title">SIGI</span>
+
+  <span class="spacer"></span>
+
+  <button mat-icon-button aria-label="Notificaciones">
+    <mat-icon>notifications</mat-icon>
+  </button>
+
+  <button mat-button>
+    <mat-icon>account_circle</mat-icon>
+    Usuario
+  </button>
+</mat-toolbar>

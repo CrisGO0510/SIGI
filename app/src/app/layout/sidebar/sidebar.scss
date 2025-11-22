@@ -1,0 +1,16 @@
+.sidebar-list {
+  padding-top: 10px;
+}
+
+a.mat-list-item {
+  color: #e0e0e0 !important;
+}
+
+a.mat-list-item:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+
+.active {
+  background: rgba(255, 255, 255, 0.15) !important;
+  font-weight: 600;
+}
