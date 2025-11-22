@@ -9,6 +9,7 @@ import { IncapacitiesModule } from './modules/incapacities/incapacities.module';
 import { DocumentsModule } from './modules/documents/documents.module';
 import { EmailModule } from './infraestructure/email/email.module';
 import { ReportsModule } from './modules/reports/reports.module';
+import { EmpresasModule } from './modules/empresas/empresas.module';
 import { AuthGuard } from './common/guards/auth.guard';
 
 @Module({
@@ -20,6 +21,7 @@ import { AuthGuard } from './common/guards/auth.guard';
     DocumentsModule,
     EmailModule,
     ReportsModule,
+    EmpresasModule,
   ],
   controllers: [AppController],
   providers: [
