@@ -4,11 +4,14 @@ import { AuthController } from './controllers/auth.controller';
 import { AuthService } from './services/auth.service';
 import { UsersModule } from '../users/users.module';
 import { EmpresasModule } from '../empresas/empresas.module';
+import { EmailModule } from '../../infraestructure/email/email.module';
+import { PasswordResetRepository } from './repositories/password-reset.repository';
 
 @Module({
   imports: [
     UsersModule,
     EmpresasModule,
+    EmailModule,
     JwtModule.register({
       global: true, // Hace que JwtService esté disponible globalmente
       secret: process.env.JWT_SECRET || 'default-secret-change-in-production',
@@ -18,7 +21,7 @@ import { EmpresasModule } from '../empresas/empresas.module';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService],
+  providers: [AuthService, PasswordResetRepository],
   exports: [AuthService],
 })
 export class AuthModule {}

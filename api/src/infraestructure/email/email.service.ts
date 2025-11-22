@@ -267,4 +267,396 @@ export class EmailService {
       text: `Hola ${nombre}, tu cuenta SIGI ha sido creada exitosamente. Tu rol es: ${rol}.`,
     });
   }
+
+  /**
+   * Genera URL de gráfico de pie para estados de incapacidades
+   */
+  private generatePieChartUrl(estadisticas: {
+    aprobadas: number;
+    rechazadas: number;
+    pendientes: number;
+  }): string {
+    const chart = {
+      type: 'pie',
+      data: {
+        labels: ['Aprobadas', 'Rechazadas', 'Pendientes'],
+        datasets: [
+          {
+            data: [
+              estadisticas.aprobadas,
+              estadisticas.rechazadas,
+              estadisticas.pendientes,
+            ],
+            backgroundColor: ['#4CAF50', '#f44336', '#FFC107'],
+          },
+        ],
+      },
+      options: {
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: {
+              font: {
+                size: 14,
+              },
+            },
+          },
+          title: {
+            display: true,
+            text: 'Distribución por Estado',
+            font: {
+              size: 18,
+              weight: 'bold',
+            },
+          },
+        },
+      },
+    };
+
+    const chartJson = encodeURIComponent(JSON.stringify(chart));
+    return `https://quickchart.io/chart?width=500&height=300&c=${chartJson}`;
+  }
+
+  /**
+   * Genera URL de gráfico de barras para incapacidades por mes
+   */
+  private generateBarChartUrl(incapacidades: Array<{ fechaInicio: string }>): string {
+    // Agrupar incapacidades por mes
+    const incapacidadesPorMes: { [key: string]: number } = {};
+    
+    incapacidades.forEach((inc) => {
+      const fecha = inc.fechaInicio.split('/'); // formato: DD/MM/YYYY
+      const mes = fecha[1]; // Obtener mes
+      const año = fecha[2]; // Obtener año
+      const mesAño = `${mes}/${año}`;
+      
+      incapacidadesPorMes[mesAño] = (incapacidadesPorMes[mesAño] || 0) + 1;
+    });
+
+    // Ordenar por fecha y obtener últimos 6 meses
+    const mesesOrdenados = Object.keys(incapacidadesPorMes)
+      .sort((a, b) => {
+        const [mesA, añoA] = a.split('/').map(Number);
+        const [mesB, añoB] = b.split('/').map(Number);
+        return añoA === añoB ? mesA - mesB : añoA - añoB;
+      })
+      .slice(-6);
+
+    const datos = mesesOrdenados.map((mes) => incapacidadesPorMes[mes]);
+
+    const chart = {
+      type: 'bar',
+      data: {
+        labels: mesesOrdenados,
+        datasets: [
+          {
+            label: 'Incapacidades',
+            data: datos,
+            backgroundColor: '#667eea',
+          },
+        ],
+      },
+      options: {
+        plugins: {
+          legend: {
+            display: false,
+          },
+          title: {
+            display: true,
+            text: 'Incapacidades por Mes',
+            font: {
+              size: 18,
+              weight: 'bold',
+            },
+          },
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              stepSize: 1,
+            },
+          },
+        },
+      },
+    };
+
+    const chartJson = encodeURIComponent(JSON.stringify(chart));
+    return `https://quickchart.io/chart?width=600&height=300&c=${chartJson}`;
+  }
+
+  /**
+   * Genera URL de gráfico de línea para montos por mes
+   */
+  private generateLineChartUrl(
+    incapacidades: Array<{ fechaInicio: string; monto?: number; estado: string }>
+  ): string {
+    // Agrupar montos aprobados por mes
+    const montosPorMes: { [key: string]: number } = {};
+    
+    incapacidades
+      .filter((inc) => inc.estado === 'APROBADA' && inc.monto)
+      .forEach((inc) => {
+        const fecha = inc.fechaInicio.split('/');
+        const mes = fecha[1];
+        const año = fecha[2];
+        const mesAño = `${mes}/${año}`;
+        
+        montosPorMes[mesAño] = (montosPorMes[mesAño] || 0) + (inc.monto || 0);
+      });
+
+    const mesesOrdenados = Object.keys(montosPorMes)
+      .sort((a, b) => {
+        const [mesA, añoA] = a.split('/').map(Number);
+        const [mesB, añoB] = b.split('/').map(Number);
+        return añoA === añoB ? mesA - mesB : añoA - añoB;
+      })
+      .slice(-6);
+
+    const datos = mesesOrdenados.map((mes) => montosPorMes[mes]);
+
+    const chart = {
+      type: 'line',
+      data: {
+        labels: mesesOrdenados,
+        datasets: [
+          {
+            label: 'Monto Total (COP)',
+            data: datos,
+            borderColor: '#4CAF50',
+            backgroundColor: 'rgba(76, 175, 80, 0.1)',
+            fill: true,
+            tension: 0.4,
+          },
+        ],
+      },
+      options: {
+        plugins: {
+          title: {
+            display: true,
+            text: 'Montos Aprobados por Mes',
+            font: {
+              size: 18,
+              weight: 'bold',
+            },
+          },
+          legend: {
+            display: false,
+          },
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              callback: function(value: any) {
+                return '$' + value.toLocaleString('es-CO');
+              },
+            },
+          },
+        },
+      },
+    };
+
+    const chartJson = encodeURIComponent(JSON.stringify(chart));
+    return `https://quickchart.io/chart?width=600&height=300&c=${chartJson}`;
+  }
+
+  /**
+   * Envía reporte de incapacidades de empleados a la empresa
+   */
+  async sendReporteEmpresa(
+    emailEmpresa: string,
+    nombreEmpresa: string,
+    periodo: { inicio: string; fin: string },
+    incapacidades: Array<{
+      empleado: string;
+      motivo: string;
+      fechaInicio: string;
+      fechaFin: string;
+      dias: number;
+      estado: string;
+      monto?: number;
+      documentoUrl?: string;
+    }>,
+    estadisticas: {
+      total: number;
+      aprobadas: number;
+      rechazadas: number;
+      pendientes: number;
+      montoTotal: number;
+    },
+  ): Promise<EmailResult> {
+    // Generar tabla HTML con las incapacidades
+    const filasIncapacidades = incapacidades
+      .map(
+        (inc) => `
+        <tr>
+          <td style="padding: 10px; border-bottom: 1px solid #ddd;">${inc.empleado}</td>
+          <td style="padding: 10px; border-bottom: 1px solid #ddd;">${inc.motivo}</td>
+          <td style="padding: 10px; border-bottom: 1px solid #ddd;">${inc.fechaInicio}</td>
+          <td style="padding: 10px; border-bottom: 1px solid #ddd;">${inc.fechaFin}</td>
+          <td style="padding: 10px; border-bottom: 1px solid #ddd; text-align: center;">${inc.dias}</td>
+          <td style="padding: 10px; border-bottom: 1px solid #ddd;">
+            <span style="padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; 
+              ${inc.estado === 'APROBADA' ? 'background-color: #4CAF50; color: white;' : 
+                inc.estado === 'RECHAZADA' ? 'background-color: #f44336; color: white;' : 
+                'background-color: #FFC107; color: black;'}">
+              ${inc.estado}
+            </span>
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #ddd; text-align: right;">
+            ${inc.monto ? '$' + inc.monto.toLocaleString('es-PA') : 'N/A'}
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #ddd; text-align: center;">
+            ${inc.documentoUrl 
+              ? `<a href="${inc.documentoUrl}" target="_blank" style="color: #667eea; text-decoration: none; font-weight: bold;">📄 Ver</a>` 
+              : '<span style="color: #999;">Sin documento</span>'}
+          </td>
+        </tr>
+      `,
+      )
+      .join('');
+
+    // Generar URLs de gráficos
+    const pieChartUrl = this.generatePieChartUrl(estadisticas);
+    const barChartUrl = this.generateBarChartUrl(incapacidades);
+    const lineChartUrl = this.generateLineChartUrl(incapacidades);
+
+    const html = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <style>
+          body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+          .container { max-width: 900px; margin: 0 auto; padding: 20px; }
+          .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+          .content { padding: 30px; background-color: #f9f9f9; }
+          .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 20px 0; }
+          .stat-card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: center; }
+          .stat-number { font-size: 32px; font-weight: bold; color: #667eea; margin: 10px 0; }
+          .stat-label { color: #666; font-size: 14px; text-transform: uppercase; }
+          .table-container { overflow-x: auto; margin: 20px 0; }
+          table { width: 100%; border-collapse: collapse; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+          th { background-color: #667eea; color: white; padding: 12px; text-align: left; font-weight: bold; }
+          .footer { text-align: center; padding: 20px; font-size: 12px; color: #666; background: #e9ecef; border-radius: 0 0 10px 10px; }
+          .period { background: #e3f2fd; padding: 15px; border-radius: 8px; margin: 20px 0; text-align: center; }
+          .charts-section { margin: 30px 0; }
+          .chart-container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin: 20px 0; text-align: center; }
+          .chart-container img { max-width: 100%; height: auto; border-radius: 8px; }
+          .charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin: 20px 0; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <h1>📊 Reporte de Incapacidades</h1>
+            <h2>${nombreEmpresa}</h2>
+          </div>
+          
+          <div class="content">
+            <div class="period">
+              <strong>📅 Período del Reporte:</strong> ${periodo.inicio} al ${periodo.fin}
+            </div>
+
+            <h3 style="color: #667eea; margin-top: 30px;">📈 Resumen Estadístico</h3>
+            
+            <div class="stats-grid">
+              <div class="stat-card">
+                <div class="stat-label">Total Incapacidades</div>
+                <div class="stat-number">${estadisticas.total}</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">Aprobadas</div>
+                <div class="stat-number" style="color: #4CAF50;">${estadisticas.aprobadas}</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">Rechazadas</div>
+                <div class="stat-number" style="color: #f44336;">${estadisticas.rechazadas}</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">Pendientes</div>
+                <div class="stat-number" style="color: #FFC107;">${estadisticas.pendientes}</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">Monto Total</div>
+                <div class="stat-number" style="font-size: 24px;">$${estadisticas.montoTotal.toLocaleString('es-PA')}</div>
+              </div>
+            </div>
+
+            ${incapacidades.length > 0 ? `
+            <div class="charts-section">
+              <h3 style="color: #667eea; margin-top: 30px;">📊 Gráficos Estadísticos</h3>
+              
+              <div class="chart-container">
+                <img src="${pieChartUrl}" alt="Distribución por Estado" />
+              </div>
+
+              <div class="charts-grid">
+                <div class="chart-container">
+                  <img src="${barChartUrl}" alt="Incapacidades por Mes" />
+                </div>
+                <div class="chart-container">
+                  <img src="${lineChartUrl}" alt="Montos Aprobados por Mes" />
+                </div>
+              </div>
+            </div>
+            ` : ''}
+
+            <h3 style="color: #667eea; margin-top: 30px;">📋 Detalle de Incapacidades</h3>
+            
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Empleado</th>
+                    <th>Motivo</th>
+                    <th>Fecha Inicio</th>
+                    <th>Fecha Fin</th>
+                    <th style="text-align: center;">Días</th>
+                    <th>Estado</th>
+                    <th style="text-align: right;">Monto</th>
+                    <th style="text-align: center;">Documento</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${filasIncapacidades}
+                </tbody>
+              </table>
+            </div>
+
+            ${incapacidades.length === 0 ? '<p style="text-align: center; padding: 30px; color: #666;">No se encontraron incapacidades en el período seleccionado.</p>' : ''}
+          </div>
+          
+          <div class="footer">
+            <p><strong>SIGI - Sistema de Gestión de Incapacidades</strong></p>
+            <p>Este es un correo automático generado el ${new Date().toLocaleString('es-PA')}</p>
+            <p>Por favor, no respondas a este mensaje.</p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+
+    const textoPlano = `
+Reporte de Incapacidades - ${nombreEmpresa}
+Período: ${periodo.inicio} al ${periodo.fin}
+
+RESUMEN:
+- Total: ${estadisticas.total}
+- Aprobadas: ${estadisticas.aprobadas}
+- Rechazadas: ${estadisticas.rechazadas}
+- Pendientes: ${estadisticas.pendientes}
+- Monto Total: $${estadisticas.montoTotal.toLocaleString('es-PA')}
+
+DETALLE:
+${incapacidades.map((inc) => `- ${inc.empleado}: ${inc.motivo} (${inc.fechaInicio} - ${inc.fechaFin}) - ${inc.estado}`).join('\n')}
+    `;
+
+    return this.sendEmail({
+      to: emailEmpresa,
+      subject: `Reporte de Incapacidades - ${nombreEmpresa} (${periodo.inicio} al ${periodo.fin})`,
+      html,
+      text: textoPlano,
+    });
+  }
 }
