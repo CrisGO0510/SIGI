@@ -40,3 +40,35 @@
   align-items: center;
   gap: 8px;
 }
+
+/* Agrega espacio arriba para separarlo del botón */
+.footer-actions {
+  margin-top: 1.5rem;
+  text-align: center;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+/* Estilo de los enlaces */
+.footer-actions a {
+  color: #3f51b5; /* Color primario de Angular Material por defecto */
+  text-decoration: none;
+  font-weight: 500;
+  margin-left: 5px;
+  cursor: pointer;
+}
+
+.footer-actions a:hover {
+  text-decoration: underline;
+}
+
+/* Para separar un poco el link de 'Olvidaste contraseña' */
+.mt-2 {
+  margin-top: 0.5rem;
+  display: block;
+}
+
+.forgot-link {
+  font-size: 0.85rem;
+  color: #777;
+}
