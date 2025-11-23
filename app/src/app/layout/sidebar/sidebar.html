@@ -9,13 +9,10 @@
     <span>Incapacidades</span>
   </a>
 
-  <a mat-list-item routerLink="/documents" routerLinkActive="active">
-    <mat-icon matListIcon>folder</mat-icon>
-    <span>Documentos</span>
-  </a>
-
-  <a mat-list-item routerLink="/reports" routerLinkActive="active">
-    <mat-icon matListIcon>assessment</mat-icon>
-    <span>Reportes</span>
-  </a>
+  @if (canViewReports) {
+    <a mat-list-item routerLink="/reports" routerLinkActive="active">
+      <mat-icon matListIcon>assessment</mat-icon>
+      <span>Reportes</span>
+    </a>
+  }
 </mat-nav-list>

@@ -24,7 +24,16 @@ export const APP_ROUTES: Routes = [
       {
         path: 'incapacities',
         loadChildren: () =>
-          import('./modules/incapacities/incapacities.routes').then((r) => r.INCAPACITIES_ROUTES),
+          import('./modules/incapacities/incapacities.routes').then(
+            (r) => r.INCAPACITIES_ROUTES,
+          ),
+      },
+      {
+        path: 'documents',
+        loadChildren: () =>
+          import('./modules/documents/document.routes').then(
+            (r) => r.DOCUMENTS_ROUTES,
+          ),
       },
       {
         path: '',

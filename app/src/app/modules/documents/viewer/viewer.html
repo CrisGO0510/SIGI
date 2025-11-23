@@ -1,1 +1,139 @@
-<p>viewer works!</p>
+<div class="viewer-container">
+  <div class="header">
+    <button mat-icon-button (click)="goBack()" matTooltip="Volver">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <h1>Gestión Documental</h1>
+  </div>
+
+  <mat-card class="info-card">
+    <mat-card-header>
+      <mat-card-title>Detalle de la Solicitud</mat-card-title>
+      <mat-card-subtitle>ID: {{ incapacity?.id }}</mat-card-subtitle>
+
+      <span class="status-chip">{{ incapacity?.estado }}</span>
+    </mat-card-header>
+
+    <mat-card-content>
+      <div class="info-grid">
+        <div class="info-item">
+          <label>Motivo:</label>
+          <p>{{ incapacity?.motivo }}</p>
+        </div>
+        <div class="info-item">
+          <label>Periodo:</label>
+          <p>
+            {{ incapacity?.fecha_inicio | date: "mediumDate" }} -
+            {{ incapacity?.fecha_fin | date: "mediumDate" }}
+          </p>
+        </div>
+        <div class="info-item">
+          <label>Monto:</label>
+          <p>
+            {{
+              incapacity?.monto_solicitado
+                | currency: "COP" : "symbol-narrow" : "1.0-0"
+            }}
+          </p>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-divider class="spacer"></mat-divider>
+
+  <div class="docs-section">
+    <div class="docs-header">
+      <h2>Documentos Adjuntos</h2>
+
+      <button mat-stroked-button color="primary"
+
+            (click)="newDocument()"
+      >
+        <mat-icon>cloud_upload</mat-icon> Subir Nuevo
+      </button>
+    </div>
+
+    <div class="table-container mat-elevation-z2">
+      <table mat-table [dataSource]="documents">
+        <ng-container matColumnDef="nombre">
+          <th mat-header-cell *matHeaderCellDef>Archivo</th>
+          <td mat-cell *matCellDef="let doc">
+            <div class="file-cell">
+              <mat-icon [style.color]="getIconColor(doc.formato)">
+                {{ getFileIcon(doc.formato) }}
+              </mat-icon>
+              <div class="file-details">
+                <span class="filename">{{ doc.nombre_archivo }}</span>
+                <span class="filemeta">{{
+                  doc.fecha_subida | date: "short"
+                }}</span>
+              </div>
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="info">
+          <th mat-header-cell *matHeaderCellDef>Tamaño</th>
+          <td mat-cell *matCellDef="let doc">
+            {{ formatFileSize(doc.tamano_bytes) }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="validacion">
+          <th mat-header-cell *matHeaderCellDef>Estado</th>
+          <td mat-cell *matCellDef="let doc">
+            @if (doc.validado) {
+              <mat-chip class="valid-chip" disableRipple>
+                <mat-icon>check</mat-icon> Validado
+              </mat-chip>
+            } @else {
+              <mat-chip
+                class="pending-chip"
+                disableRipple
+                matTooltip="Pendiente de revisión por RRHH"
+              >
+                <mat-icon>hourglass_empty</mat-icon> Pendiente
+              </mat-chip>
+            }
+
+            @if (doc.detalle_validacion) {
+              <div class="validation-note">{{ doc.detalle_validacion }}</div>
+            }
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="acciones">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let doc">
+            <button
+              mat-icon-button
+              color="primary"
+              (click)="openDocument(doc.url_publica)"
+              matTooltip="Ver archivo"
+            >
+              <mat-icon>visibility</mat-icon>
+            </button>
+            <!-- <button -->
+            <!--   mat-icon-button -->
+            <!--   color="warn" -->
+            <!--   matTooltip="Eliminar (Solo si no está validado)" -->
+            <!-- > -->
+            <!--   <mat-icon>delete</mat-icon> -->
+            <!-- </button> -->
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell empty-state" colspan="4">
+            <mat-icon>folder_open</mat-icon>
+            <span>No hay documentos cargados aún.</span>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>

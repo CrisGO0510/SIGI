@@ -1,0 +1,151 @@
+.viewer-container {
+  padding: 24px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+
+  h1 {
+    margin: 0;
+    font-weight: 300;
+  }
+}
+
+.info-card {
+  margin-bottom: 24px;
+
+  mat-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .status-chip {
+    background: #e0e0e0;
+    color: #333;
+    padding: 4px 12px;
+    border-radius: 16px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-left: auto;
+  }
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+
+  .info-item {
+    display: flex;
+    flex-direction: column;
+
+    label {
+      font-size: 0.8rem;
+      color: #888;
+      font-weight: 500;
+    }
+    p {
+      margin: 4px 0 0;
+      font-size: 1rem;
+      font-weight: 400;
+    }
+  }
+}
+
+.spacer {
+  margin: 32px 0;
+}
+
+.docs-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+
+  h2 {
+    margin: 0;
+    font-size: 1.2rem;
+  }
+}
+
+.table-container {
+  border-radius: 8px;
+  overflow: hidden;
+  background: #1e1e1e;
+}
+
+.file-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+
+  .file-details {
+    display: flex;
+    flex-direction: column;
+    .filename {
+      font-weight: 500;
+    }
+    .filemeta {
+      font-size: 0.75rem;
+      color: #aaa;
+    }
+  }
+}
+
+.valid-chip {
+  background-color: #e8f5e9 !important;
+  color: #2e7d32 !important;
+  min-height: 24px;
+  font-size: 0.75rem;
+
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+  }
+}
+
+.pending-chip {
+  background-color: #8c5600 !important;
+  color: #ef6c00 !important;
+  min-height: 24px;
+  font-size: 0.75rem;
+
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+  }
+}
+
+.validation-note {
+  font-size: 0.7rem;
+  color: #aaa;
+  margin-top: 4px;
+  font-style: italic;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+
+  mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    margin-bottom: 8px;
+    opacity: 0.5;
+  }
+  span {
+    display: block;
+  }
+}

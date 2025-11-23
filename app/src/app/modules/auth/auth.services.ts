@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { tap } from 'rxjs/operators';
 import { AuthResponse } from './interfaces/auth-response.interface';
 import { RegisterRequest } from './interfaces/register-request.interface';
+import { UserResponse } from './interfaces/user-response.interface';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -29,6 +30,14 @@ export class AuthService {
 
   get token(): string | null {
     return localStorage.getItem('access_token');
+  }
+
+  get user(): UserResponse | null {
+    const user = localStorage.getItem('user');
+    if (user) {
+      return JSON.parse(user);
+    }
+    return null;
   }
 
   isLogged(): boolean {

@@ -1,1 +1,90 @@
-<p>uploader works!</p>
+<div class="uploader-container">
+  <mat-card class="upload-card">
+    <mat-card-header>
+      <mat-card-title>Subir Soporte</mat-card-title>
+      <mat-card-subtitle
+        >Adjunta archivos PDF o Imágenes (Máx 5MB)</mat-card-subtitle
+      >
+    </mat-card-header>
+
+    <mat-card-content>
+      <div class="file-drop-zone" [class.has-file]="selectedFile">
+        @if (!selectedFile) {
+          <mat-icon class="upload-icon">cloud_upload</mat-icon>
+          <p>Haz clic para seleccionar un archivo</p>
+          <button
+            mat-stroked-button
+            color="primary"
+            (click)="fileInput.click()"
+          >
+            Buscar en equipo
+          </button>
+        } @else {
+          <mat-icon class="file-icon">description</mat-icon>
+          <div class="file-info">
+            <span class="file-name">{{ selectedFile.name }}</span>
+            <span class="file-size"
+              >{{ selectedFile.size / 1024 / 1024 | number: "1.2-2" }} MB</span
+            >
+          </div>
+          <button mat-icon-button color="warn" (click)="selectedFile = null">
+            <mat-icon>close</mat-icon>
+          </button>
+        }
+
+        <input
+          #fileInput
+          type="file"
+          hidden
+          (change)="onFileSelected($event)"
+          accept=".pdf,.jpg,.jpeg,.png"
+        />
+      </div>
+
+      <form [formGroup]="form" class="meta-form">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Tipo de Documento</mat-label>
+          <mat-select formControlName="tipoDocumento">
+            @for (type of documentTypes; track type.value) {
+              <mat-option [value]="type.value">{{ type.label }}</mat-option>
+            }
+          </mat-select>
+          @if (form.get("tipoDocumento")?.hasError("required")) {
+            <mat-error>Requerido</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Descripción corta</mat-label>
+          <input
+            matInput
+            formControlName="descripcion"
+            placeholder="Ej: Incapacidad del 15 al 20"
+          />
+          @if (form.get("descripcion")?.hasError("required")) {
+            <mat-error>Requerido</mat-error>
+          }
+        </mat-form-field>
+      </form>
+
+      @if (uploading) {
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <p class="uploading-text">Subiendo archivo a la nube...</p>
+      }
+    </mat-card-content>
+
+    <mat-card-actions align="end">
+      <button mat-button (click)="goBack()" [disabled]="uploading">
+        Cancelar
+      </button>
+      <button
+        mat-flat-button
+        color="primary"
+        (click)="upload()"
+        [disabled]="!selectedFile || form.invalid || uploading"
+      >
+        {{ uploading ? "Subiendo..." : "Subir Archivo" }}
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</div>

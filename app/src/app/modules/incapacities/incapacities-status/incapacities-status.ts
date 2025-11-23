@@ -194,4 +194,8 @@ export class IncapacitiesStatus implements OnInit {
   editIncapacity(incapacityId: number) {
     this.router.navigate(['/incapacities/form'], { state: { incapacityId } });
   }
+  goToDocuments(incapacity: Incapacity) {
+    this.router.navigate(['/documents/viewer'], { state: { incapacity } });
+  }
+
 }
