@@ -13,3 +13,15 @@ export const authGuard: CanActivateFn = () => {
 
   return true;
 };
+
+export const publicGuard: CanActivateFn = () => {
+  const userService = inject(UserService);
+  const router = inject(Router);
+
+  if (userService.isLoggedIn()) {
+    router.navigate(['/dashboard']);
+    return false;
+  }
+
+  return true;
+};

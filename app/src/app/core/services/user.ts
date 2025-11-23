@@ -1,20 +1,27 @@
 import { Injectable } from '@angular/core';
 
-@Injectable()
+// Agregamos { providedIn: 'root' } para no tener que ponerlo en providers del app.config
+@Injectable({ providedIn: 'root' })
 export class UserService {
-  private loggedIn = false;
-  private role = 'guest';
+  isLoggedIn(): boolean {
+    return !!localStorage.getItem('access_token');
+  }
 
-  isLoggedIn() {
-    return this.loggedIn;
-  }
-  login() {
-    this.loggedIn = true;
-  }
   logout() {
-    this.loggedIn = false;
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('user');
   }
-  currentRole() {
-    return this.role;
+
+  currentRole(): string {
+    const userStr = localStorage.getItem('user');
+    if (userStr) {
+      try {
+        const user = JSON.parse(userStr);
+        return user.rol || 'guest';
+      } catch (e) {
+        return 'guest';
+      }
+    }
+    return 'guest';
   }
 }
