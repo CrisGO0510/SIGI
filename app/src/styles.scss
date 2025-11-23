@@ -29,3 +29,17 @@ body {
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
+
+.custom-toast-panel {
+  .mat-mdc-snack-bar-container {
+    --mdc-snackbar-container-color: transparent;
+    --mdc-snackbar-supporting-text-color: inherit;
+    --mat-mdc-snack-bar-button-color: inherit;
+  }
+
+  .mdc-snackbar__surface {
+    background-color: transparent !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+  }
+}

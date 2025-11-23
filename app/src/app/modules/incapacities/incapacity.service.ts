@@ -32,4 +32,50 @@ export class IncapacityService {
       headers,
     });
   }
+
+  getById(id: string): Observable<Incapacity> {
+    const token = this.authService.token;
+
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    return this.http.get<Incapacity>(`${this.baseUrl}/${id}`, {
+      headers,
+    });
+  }
+
+  create(incapacity: Partial<Incapacity>): Observable<Incapacity> {
+    const userStr = localStorage.getItem('user');
+    const user = userStr ? JSON.parse(userStr) : null;
+    const userId = user?.id;
+
+    if (!userId) {
+      throw new Error('No se pudo identificar el usuario logueado');
+    }
+
+    const token = this.authService.token;
+
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    return this.http.post<Incapacity>(
+      this.baseUrl,
+      { ...incapacity, usuario_id: userId },
+      { headers },
+    );
+  }
+
+  update(id: string, incapacity: Partial<Incapacity>): Observable<Incapacity> {
+    const token = this.authService.token;
+
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    return this.http.patch<Incapacity>(`${this.baseUrl}/${id}`, incapacity, {
+      headers,
+    });
+  }
 }

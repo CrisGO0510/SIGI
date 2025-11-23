@@ -1,0 +1,12 @@
+<div class="toast-container" [ngClass]="data.type">
+  <mat-icon class="toast-icon">{{ getIcon() }}</mat-icon>
+
+  <div class="toast-content">
+    <span class="toast-title">{{ getTitle() }}</span>
+    <span class="toast-message">{{ data.message }}</span>
+  </div>
+
+  <button class="close-btn" (click)="snackBarRef.dismiss()">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
