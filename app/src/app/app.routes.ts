@@ -22,6 +22,11 @@ export const APP_ROUTES: Routes = [
           ),
       },
       {
+        path: 'incapacities',
+        loadChildren: () =>
+          import('./modules/incapacities/incapacities.routes').then((r) => r.INCAPACITIES_ROUTES),
+      },
+      {
         path: '',
         redirectTo: 'dashboard',
         pathMatch: 'full',

@@ -1,1 +1,47 @@
-<p>home-dashboard works!</p>
+<div class="dashboard-container">
+  <div class="welcome-header">
+    <h1>¡Hola, {{ userName }}! 👋</h1>
+    <p>Bienvenido al Sistema de Gestión de Incapacidades.</p>
+    <p class="subtitle">¿Qué deseas hacer hoy?</p>
+  </div>
+
+  <div class="actions-grid">
+    <mat-card
+      class="action-card primary-action"
+      matRipple
+      routerLink="/incapacities/new"
+    >
+      <mat-card-content>
+        <div class="icon-container">
+          <mat-icon>add_circle</mat-icon>
+        </div>
+        <h3>Nueva Incapacidad</h3>
+        <p>Radica una nueva solicitud médica o licencia.</p>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card
+      class="action-card"
+      matRipple
+      routerLink="/incapacities/history"
+    >
+      <mat-card-content>
+        <div class="icon-container">
+          <mat-icon>history</mat-icon>
+        </div>
+        <h3>Mis Trámites</h3>
+        <p>Consulta el estado de tus solicitudes anteriores.</p>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="action-card" matRipple>
+      <mat-card-content>
+        <div class="icon-container">
+          <mat-icon>help_outline</mat-icon>
+        </div>
+        <h3>¿Necesitas Ayuda?</h3>
+        <p>Contacta con RRHH o ve preguntas frecuentes.</p>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
