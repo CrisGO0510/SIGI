@@ -33,8 +33,8 @@ export const APP_ROUTES: Routes = [
       },
     ],
   },
-  {
-    path: '**',
-    redirectTo: 'dashboard',
-  },
+  // {
+  //   path: '**',
+  //   redirectTo: 'dashboard',
+  // },
 ];

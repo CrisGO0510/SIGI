@@ -1,0 +1,94 @@
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+
+  h1 {
+    margin: 0;
+    font-weight: 300;
+  }
+}
+
+.status-container {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.top-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 24px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.filter-card,
+.chart-card {
+  height: 100%;
+}
+
+.full-width {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.chart-content {
+  display: flex;
+  justify-content: center;
+  max-height: 250px;
+}
+
+.table-container {
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: #1e1e1e;
+}
+
+.status-badge {
+  padding: 6px 12px;
+  border-radius: 16px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: white;
+  background-color: #666;
+
+  &.status-registered {
+    background-color: #2196f3;
+  }
+  &.status-validating {
+    background-color: #03a9f4;
+  }
+
+  &.status-pendingReview {
+    background-color: #ff9800;
+    color: #000;
+  }
+  &.status-inReview {
+    background-color: #ff5722;
+  }
+
+  &.status-approved {
+    background-color: #4caf50;
+  }
+  &.status-paid {
+    background-color: #9c27b0;
+  }
+  &.status-closed {
+    background-color: #607d8b;
+  }
+
+  &.status-rejected {
+    background-color: #f44336;
+  }
+  &.status-correction {
+    background-color: #ffeb3b;
+    color: #000;
+  }
+}
