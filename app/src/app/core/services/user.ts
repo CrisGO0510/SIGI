@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
+import { UserRoleEnum } from '../../modules/auth/interfaces/user-role.enum';
+import { UserResponse } from '../../modules/auth/interfaces/user-response.interface';
 
-// Agregamos { providedIn: 'root' } para no tener que ponerlo en providers del app.config
 @Injectable({ providedIn: 'root' })
 export class UserService {
   isLoggedIn(): boolean {
@@ -12,16 +13,16 @@ export class UserService {
     localStorage.removeItem('user');
   }
 
-  currentRole(): string {
+  currentRole(): UserRoleEnum | null {
     const userStr = localStorage.getItem('user');
     if (userStr) {
       try {
-        const user = JSON.parse(userStr);
-        return user.rol || 'guest';
+        const user: UserResponse = JSON.parse(userStr);
+        return user.rol;
       } catch (e) {
-        return 'guest';
+        return null;
       }
     }
-    return 'guest';
+    return null;
   }
 }
