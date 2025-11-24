@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { Layout } from './layout/layout';
 import { authGuard, publicGuard } from './core/guards/auth-guard';
+import { roleGuard } from './core/guards/role-guard';
 
 export const APP_ROUTES: Routes = [
   {
@@ -14,6 +15,12 @@ export const APP_ROUTES: Routes = [
     component: Layout,
     canActivate: [authGuard],
     children: [
+      {
+        path: 'hr',
+        canActivate: [roleGuard(['RRHH', 'ADMIN'])],
+        loadChildren: () =>
+          import('./modules/hr/hr.routes').then((m) => m.HR_ROUTES),
+      },
       {
         path: 'dashboard',
         loadComponent: () =>
