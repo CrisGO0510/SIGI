@@ -133,6 +133,6 @@ export class HrUsersComponent implements OnInit {
       return;
     }
 
-    this.router.navigate(['/documents/viewer'], { state: { user } });
+    this.router.navigate(['/hr/incapacities/history'], { state: { user } });
   }
 }

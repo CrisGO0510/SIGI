@@ -36,12 +36,18 @@ export class IncapacityService {
     });
   }
 
-  getAllIncapacities(): Observable<Incapacity[]> {
+  getAllIncapacities(userId?: string): Observable<Incapacity[]> {
     const token = this.authService.token;
 
     const headers = new HttpHeaders({
       Authorization: `Bearer ${token}`,
     });
+
+    if (userId) {
+      return this.http.get<Incapacity[]>(`${this.baseUrl}/usuario/${userId}`, {
+        headers,
+      });
+    }
 
     return this.http.get<Incapacity[]>(`${this.baseUrl}`, {
       headers,

@@ -1,10 +1,18 @@
 <div class="status-container">
   <div class="page-header">
-    <h1 class="mat-h1">Todas las Incapacidades</h1>
-    <button mat-flat-button color="primary" routerLink="/hr/users">
-      <mat-icon>search</mat-icon>
-      Buscar por usuario
-    </button>
+    @if (user) {
+      <h1 class="mat-h1">Incapacidades de {{ user.nombre }}</h1>
+      <button mat-flat-button color="primary" routerLink="/hr/users">
+        <mat-icon>arrow_back</mat-icon>
+        Volver al menu de usuarios
+      </button>
+    } @else {
+      <h1 class="mat-h1">Todas las Incapacidades</h1>
+      <button mat-flat-button color="primary" routerLink="/hr/users">
+        <mat-icon>search</mat-icon>
+        Buscar por usuario
+      </button>
+    }
   </div>
   <div class="top-section">
     <mat-card class="filter-card">

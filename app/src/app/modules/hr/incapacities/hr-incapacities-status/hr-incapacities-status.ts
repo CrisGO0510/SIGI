@@ -23,6 +23,7 @@ import {
   Incapacity,
   IncapacityStatusEnum,
 } from '../../../../core/models/incapacity.model';
+import { UserResponse } from '../../../auth/interfaces/user-response.interface';
 
 @Component({
   selector: 'app-incapacities-status',
@@ -83,13 +84,16 @@ export class IncapacitiesStatus implements OnInit {
 
   rawResponse: Incapacity[] = [];
 
+  user?: UserResponse;
+
   ngOnInit() {
+    this.user = history.state.user;
     this.loadIncapacities();
     this.setupDateFilter();
   }
 
   loadIncapacities() {
-    this.incapacityService.getAllIncapacities().subscribe({
+    this.incapacityService.getAllIncapacities(this.user?.id).subscribe({
       next: (data) => {
         this.rawResponse = data;
         this.processData(data);
@@ -190,7 +194,9 @@ export class IncapacitiesStatus implements OnInit {
   }
 
   editIncapacity(incapacityId: number) {
-    this.router.navigate(['/hr/incapacities/form'], { state: { incapacityId } });
+    this.router.navigate(['/hr/incapacities/form'], {
+      state: { incapacityId },
+    });
   }
   goToDocuments(incapacity: Incapacity) {
     this.router.navigate(['/documents/viewer'], { state: { incapacity } });
