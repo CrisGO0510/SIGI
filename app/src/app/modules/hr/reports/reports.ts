@@ -14,6 +14,17 @@ import { MatListModule } from '@angular/material/list';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { ReportsService } from './report.service';
 import { DashboardResponse } from '../../../core/models/reports.model';
+import { AuthService, CompanySelectOption } from '../../auth/auth.services';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { ToastService } from '../../../shared/components/toast/toast.services';
 
 @Component({
   selector: 'app-reports-dashboard',
@@ -27,6 +38,10 @@ import { DashboardResponse } from '../../../core/models/reports.model';
     MatListModule,
     MatProgressBarModule,
     MatChipsModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatDatepickerModule,
   ],
   providers: [provideCharts(withDefaultRegisterables())],
   templateUrl: './reports.html',
@@ -34,9 +49,14 @@ import { DashboardResponse } from '../../../core/models/reports.model';
 })
 export class ReportsComponent implements OnInit {
   private reportsService = inject(ReportsService);
+  private authService = inject(AuthService);
+  private fb = inject(FormBuilder);
+  private toast = inject(ToastService);
 
+  companies: CompanySelectOption[] = [];
   data: DashboardResponse | null = null;
   loading = true;
+  generating = false;
 
   public pieChartOptions: ChartConfiguration['options'] = {
     responsive: true,
@@ -58,6 +78,24 @@ export class ReportsComponent implements OnInit {
 
   ngOnInit() {
     this.loadData();
+    this.loadCompanies();
+  }
+
+  loadCompanies() {
+    this.authService.getCompanies().subscribe({
+      next: (data: CompanySelectOption[]) => (this.companies = data),
+      error: (err) => console.error(err),
+    });
+  }
+
+  reportForm!: FormGroup;
+
+  constructor() {
+    this.reportForm = this.fb.group({
+      empresa_id: ['', Validators.required],
+      fechaInicio: [null, Validators.required],
+      fechaFin: [null, Validators.required],
+    });
   }
 
   loadData() {
@@ -114,5 +152,62 @@ export class ReportsComponent implements OnInit {
     if (tendencia === 'subida') return 'trending_up';
     if (tendencia === 'bajada') return 'trending_down';
     return 'trending_flat';
+  }
+
+  private formatDate(date: Date): string {
+    return date ? date.toISOString().split('T')[0] : '';
+  }
+
+  sendEmail() {
+    if (this.reportForm.invalid) return;
+    this.generating = true;
+    const { empresa_id, fechaInicio, fechaFin } = this.reportForm.value;
+
+    this.reportsService
+      .sendReportEmail(
+        empresa_id,
+        this.formatDate(fechaInicio),
+        this.formatDate(fechaFin),
+      )
+      .subscribe({
+        next: () => {
+          this.toast.success('Reporte enviado por correo');
+          this.generating = false;
+        },
+        error: () => {
+          this.toast.error('Error enviando correo');
+          this.generating = false;
+        },
+      });
+  }
+
+  downloadFile(formato: 'PDF' | 'CSV') {
+    if (this.reportForm.invalid) return;
+    this.generating = true;
+    const { empresa_id, fechaInicio, fechaFin } = this.reportForm.value;
+
+    this.reportsService
+      .downloadReport(
+        empresa_id,
+        formato,
+        this.formatDate(fechaInicio),
+        this.formatDate(fechaFin),
+      )
+      .subscribe({
+        next: (blob) => {
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `reporte_${new Date().getTime()}.${formato.toLowerCase()}`;
+          a.click();
+          window.URL.revokeObjectURL(url);
+          this.toast.success(`Reporte ${formato} descargado`);
+          this.generating = false;
+        },
+        error: () => {
+          this.toast.error('Error descargando archivo');
+          this.generating = false;
+        },
+      });
   }
 }
