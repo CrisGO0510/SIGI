@@ -1,0 +1,70 @@
+<div class="form-container">
+  <mat-card class="form-card">
+    <mat-card-header>
+      <mat-card-title>{{
+        isEditMode ? "Editar Empresa" : "Nueva Empresa"
+      }}</mat-card-title>
+      <mat-card-subtitle>Información corporativa</mat-card-subtitle>
+    </mat-card-header>
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <mat-card-content class="form-content">
+        <!-- Nombre -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Nombre de la Empresa</mat-label>
+          <input
+            matInput
+            formControlName="nombre"
+            placeholder="Ej: Tech Solutions S.A."
+          />
+          <mat-icon matSuffix>business</mat-icon>
+          @if (form.get("nombre")?.hasError("required")) {
+            <mat-error>Requerido</mat-error>
+          }
+        </mat-form-field>
+
+        <!-- Correo -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Correo de Contacto</mat-label>
+          <input
+            matInput
+            formControlName="correo_contacto"
+            placeholder="contacto@empresa.com"
+          />
+          <mat-icon matSuffix>email</mat-icon>
+          @if (form.get("correo_contacto")?.hasError("required")) {
+            <mat-error>Requerido</mat-error>
+          } @else if (form.get("correo_contacto")?.hasError("email")) {
+            <mat-error>Correo inválido</mat-error>
+          }
+        </mat-form-field>
+
+        <!-- Dirección -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Dirección Física</mat-label>
+          <input
+            matInput
+            formControlName="direccion"
+            placeholder="Av. Principal #123"
+          />
+          <mat-icon matSuffix>place</mat-icon>
+          @if (form.get("direccion")?.hasError("required")) {
+            <mat-error>Requerido</mat-error>
+          }
+        </mat-form-field>
+      </mat-card-content>
+
+      <mat-card-actions align="end">
+        <button mat-button type="button" (click)="goBack()">Cancelar</button>
+        <button
+          mat-flat-button
+          color="primary"
+          type="submit"
+          [disabled]="form.invalid || loading"
+        >
+          {{ isEditMode ? "Guardar Cambios" : "Crear Empresa" }}
+        </button>
+      </mat-card-actions>
+    </form>
+  </mat-card>
+</div>

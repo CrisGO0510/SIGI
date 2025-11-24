@@ -43,6 +43,14 @@ export const APP_ROUTES: Routes = [
           ),
       },
       {
+        path: 'companies',
+        canActivate: [roleGuard(['ADMIN'])],
+        loadChildren: () =>
+          import('./modules/companies/companies.routes').then(
+            (m) => m.COMPANY_ROUTES,
+          ),
+      },
+      {
         path: '',
         redirectTo: 'dashboard',
         pathMatch: 'full',

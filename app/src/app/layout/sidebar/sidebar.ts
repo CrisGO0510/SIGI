@@ -33,4 +33,8 @@ export class Sidebar implements OnInit {
       this.userRole === UserRoleEnum.employment
     );
   }
+
+  get isAdmin(): boolean {
+    return this.userRole === UserRoleEnum.admin;
+  }
 }
