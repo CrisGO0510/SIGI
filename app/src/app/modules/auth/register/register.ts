@@ -74,7 +74,7 @@ export class Register implements OnInit {
     this.auth.register(registerData).subscribe({
       next: () => {
         this.loading = false;
-        this.router.navigate(['/dashboard']);
+        this.router.navigate(['/']);
       },
       error: (err) => {
         this.loading = false;

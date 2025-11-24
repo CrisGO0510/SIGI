@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Header } from './header/header';
 import { Sidebar } from './sidebar/sidebar';
 import { Footer } from './footer/footer';
-import { RouterOutlet } from '@angular/router';
+import { Router, RouterOutlet } from '@angular/router';
+import { UserService } from '../core/services/user';
 
 @Component({
   standalone: true,
@@ -11,4 +12,18 @@ import { RouterOutlet } from '@angular/router';
   styleUrls: ['./layout.scss'],
   imports: [Header, Sidebar, Footer, RouterOutlet],
 })
-export class Layout {}
+export class Layout {
+  private router = inject(Router);
+  private userService = inject(UserService);
+
+  ngOnInit() {
+    const role = this.userService.currentRole();
+    if (this.router.url === '/') {
+      console.log('Redirecting based on role:', role);
+
+      if (role === 'EMPLEADO') this.router.navigate(['/dashboard']);
+      else if (role === 'RRHH' || role === 'ADMIN')
+        this.router.navigate(['/hr/dashboard']);
+    }
+  }
+}

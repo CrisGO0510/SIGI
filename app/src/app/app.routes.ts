@@ -50,15 +50,6 @@ export const APP_ROUTES: Routes = [
             (m) => m.COMPANY_ROUTES,
           ),
       },
-      {
-        path: '',
-        redirectTo: 'dashboard',
-        pathMatch: 'full',
-      },
     ],
   },
-  // {
-  //   path: '**',
-  //   redirectTo: 'dashboard',
-  // },
 ];
