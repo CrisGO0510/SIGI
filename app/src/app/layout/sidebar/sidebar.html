@@ -1,16 +1,26 @@
 <mat-nav-list class="sidebar-list">
-  <a mat-list-item routerLink="/dashboard" routerLinkActive="active">
-    <mat-icon matListIcon>dashboard</mat-icon>
-    <span>Dashboard</span>
-  </a>
+  @if (isEmployment) {
+    <a mat-list-item routerLink="/dashboard" routerLinkActive="active">
+      <mat-icon matListIcon>dashboard</mat-icon>
+      <span>Dashboard</span>
+    </a>
 
-  <a mat-list-item routerLink="/incapacities" routerLinkActive="active">
-    <mat-icon matListIcon>assignment</mat-icon>
-    <span>Incapacidades</span>
-  </a>
+    <a mat-list-item routerLink="/incapacities" routerLinkActive="active">
+      <mat-icon matListIcon>assignment</mat-icon>
+      <span>Incapacidades</span>
+    </a>
+  } @else {
 
-  @if (canViewReports) {
-    <a mat-list-item routerLink="/reports" routerLinkActive="active">
+    <a mat-list-item routerLink="/hr/dashboard" routerLinkActive="active">
+      <mat-icon matListIcon>dashboard</mat-icon>
+      <span>Dashboard</span>
+    </a>
+
+    <a mat-list-item routerLink="/hr/incapacities" routerLinkActive="active">
+      <mat-icon matListIcon>assignment</mat-icon>
+      <span>Incapacidades</span>
+    </a>
+    <a mat-list-item routerLink="/hr/reports" routerLinkActive="active">
       <mat-icon matListIcon>assessment</mat-icon>
       <span>Reportes</span>
     </a>

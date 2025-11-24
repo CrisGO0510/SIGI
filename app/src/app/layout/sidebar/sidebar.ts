@@ -28,9 +28,9 @@ export class Sidebar implements OnInit {
     this.userRole = this.userService.currentRole();
   }
 
-  get canViewReports(): boolean {
+  get isEmployment(): boolean {
     return (
-      this.userRole === this.roles.admin || this.userRole === this.roles.rrhh
+      this.userRole === UserRoleEnum.employment
     );
   }
 }
