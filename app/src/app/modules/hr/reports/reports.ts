@@ -174,8 +174,15 @@ export class ReportsComponent implements OnInit {
           this.toast.success('Reporte enviado por correo');
           this.generating = false;
         },
-        error: () => {
-          this.toast.error('Error enviando correo');
+        error: (err: any) => {
+          console.log(err);
+
+          if (err && err.status == 400 && err.error.message) {
+            this.toast.warning(err.error.message);
+          } else {
+            this.toast.error('Error enviando correo');
+          }
+
           this.generating = false;
         },
       });
