@@ -1,0 +1,111 @@
+<div class="form-container">
+  <mat-card class="form-card">
+    <mat-card-header>
+      <mat-card-title>Revisión de Incapacidad</mat-card-title>
+      <mat-card-subtitle
+        >Información del empleado (Solo Lectura)</mat-card-subtitle
+      >
+    </mat-card-header>
+
+    <mat-card-content>
+      <form [formGroup]="readOnlyForm" class="readonly-section">
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Fecha Inicio</mat-label>
+            <input
+              matInput
+              [matDatepicker]="pickerStart"
+              formControlName="fecha_inicio"
+            />
+            <mat-datepicker-toggle
+              matIconSuffix
+              [for]="pickerStart"
+              disabled
+            ></mat-datepicker-toggle>
+            <mat-datepicker #pickerStart></mat-datepicker>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Fecha Fin</mat-label>
+            <input
+              matInput
+              [matDatepicker]="pickerEnd"
+              formControlName="fecha_fin"
+            />
+            <mat-datepicker-toggle
+              matIconSuffix
+              [for]="pickerEnd"
+              disabled
+            ></mat-datepicker-toggle>
+            <mat-datepicker #pickerEnd></mat-datepicker>
+          </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Motivo Reportado</mat-label>
+          <input matInput formControlName="motivo" readonly />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Monto Solicitado</mat-label>
+          <span matTextPrefix>$&nbsp;</span>
+          <input matInput formControlName="monto_solicitado" readonly />
+        </mat-form-field>
+      </form>
+
+      <mat-divider class="my-3"></mat-divider>
+
+      <h3 class="section-title">Gestión de la Solicitud</h3>
+
+      <form [formGroup]="actionForm" (ngSubmit)="updateStatus()">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Nuevo Estado</mat-label>
+          <mat-select formControlName="estado">
+            @for (status of availableStatuses; track status) {
+              <mat-option [value]="status">{{ status }}</mat-option>
+            }
+          </mat-select>
+          @if (actionForm.get("estado")?.hasError("required")) {
+            <mat-error>Debes seleccionar un estado</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Observaciones / Dictamen</mat-label>
+          <textarea
+            matInput
+            formControlName="observaciones"
+            rows="4"
+            placeholder="Escribe aquí el motivo de aprobación, rechazo o corrección..."
+          >
+          </textarea>
+          <mat-hint
+            >Estas observaciones serán visibles para el empleado.</mat-hint
+          >
+          @if (actionForm.get("observaciones")?.hasError("required")) {
+            <mat-error
+              >La observación es obligatoria al cambiar estado</mat-error
+            >
+          }
+        </mat-form-field>
+
+        <div class="actions">
+          <button mat-button type="button" (click)="goBack()">Cancelar</button>
+
+          <button
+            mat-flat-button
+            color="primary"
+            type="submit"
+            [disabled]="loading || actionForm.invalid"
+          >
+            @if (loading) {
+              Guardando...
+            } @else {
+              Actualizar Estado
+            }
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

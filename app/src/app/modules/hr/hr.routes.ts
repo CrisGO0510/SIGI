@@ -4,23 +4,19 @@ export const HR_ROUTES: Routes = [
   {
     path: 'dashboard',
     loadComponent: () =>
-      import('./dashboard/hr-dashboard').then(
-        (m) => m.HrDashboardComponent,
-      ),
+      import('./dashboard/hr-dashboard').then((m) => m.HrDashboardComponent),
   },
   {
-    path: 'management',
-    loadComponent: () =>
-      import('./management/hr-management').then(
-        (m) => m.HrManagementComponent,
+    path: 'incapacities',
+    loadChildren: () =>
+      import('./incapacities/incapacities.routes').then(
+        (m) => m.INCAPACITIES_ROUTES,
       ),
   },
   {
     path: 'documents',
     loadComponent: () =>
-      import('./documents/hr-documents').then(
-        (m) => m.HrDocumentsComponent,
-      ),
+      import('./documents/hr-documents').then((m) => m.HrDocumentsComponent),
   },
   {
     path: 'users',

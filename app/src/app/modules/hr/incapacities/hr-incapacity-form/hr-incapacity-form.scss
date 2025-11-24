@@ -1,0 +1,54 @@
+.form-container {
+  display: flex;
+  justify-content: center;
+  padding: 40px 20px;
+}
+
+.form-card {
+  width: 100%;
+  max-width: 600px;
+}
+
+.readonly-section {
+  opacity: 0.8;
+  pointer-events: none;
+
+  mat-form-field {
+    width: 100%;
+  }
+}
+
+.form-row {
+  display: flex;
+  gap: 16px;
+
+  .half-width {
+    width: 50%;
+  }
+}
+
+.my-3 {
+  margin: 24px 0;
+}
+
+.section-title {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #2196f3;
+  margin-bottom: 16px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+textarea {
+  resize: none;
+}

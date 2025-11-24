@@ -1,0 +1,135 @@
+<div class="status-container">
+  <div class="page-header">
+    <h1 class="mat-h1">Todas las Incapacidades</h1>
+    <button mat-flat-button color="primary" routerLink="/hr/users">
+      <mat-icon>search</mat-icon>
+      Buscar por usuario
+    </button>
+  </div>
+  <div class="top-section">
+    <mat-card class="filter-card">
+      <mat-card-header>
+        <mat-card-title>Filtrar Historial</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Rango de fechas (Inicio)</mat-label>
+          <mat-date-range-input [formGroup]="range" [rangePicker]="picker">
+            <input matStartDate formControlName="start" placeholder="Desde" />
+            <input matEndDate formControlName="end" placeholder="Hasta" />
+          </mat-date-range-input>
+          <mat-datepicker-toggle
+            matIconSuffix
+            [for]="picker"
+          ></mat-datepicker-toggle>
+          <mat-date-range-picker #picker></mat-date-range-picker>
+
+          @if (range.controls.start.hasError("matStartDateInvalid")) {
+            <mat-error>Fecha inicial inválida</mat-error>
+          }
+        </mat-form-field>
+
+        <button mat-stroked-button color="warn" (click)="resetFilters()">
+          Limpiar Filtros
+        </button>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="chart-card">
+      <mat-card-header>
+        <mat-card-title>Resumen de Estados</mat-card-title>
+      </mat-card-header>
+      <mat-card-content class="chart-content">
+        <canvas
+          baseChart
+          [data]="pieChartData"
+          [type]="pieChartType"
+          [options]="pieChartOptions"
+        >
+        </canvas>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div class="table-container mat-elevation-z8">
+    <div class="table-hint">
+      <mat-icon>info</mat-icon>
+      <span
+        >Haz clic en cualquier fila para gestionar los
+        <strong>documentos y soportes</strong> de la incapacidad.</span
+      >
+    </div>
+    <table mat-table [dataSource]="dataSource" matSort>
+      <ng-container matColumnDef="fecha_inicio">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha Inicio</th>
+        <td mat-cell *matCellDef="let row">
+          {{ row.fecha_inicio | date: "mediumDate" }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="motivo">
+        <th mat-header-cell *matHeaderCellDef>Motivo</th>
+        <td mat-cell *matCellDef="let row">{{ row.motivo }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="dias">
+        <th mat-header-cell *matHeaderCellDef>Fin</th>
+        <td mat-cell *matCellDef="let row">
+          {{ row.fecha_fin | date: "mediumDate" }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="monto">
+        <th mat-header-cell *matHeaderCellDef>Monto</th>
+        <td mat-cell *matCellDef="let row">
+          {{
+            row.monto_solicitado | currency: "COP" : "symbol-narrow" : "1.0-0"
+          }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="estado">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Estado</th>
+        <td mat-cell *matCellDef="let row">
+          <span class="status-badge" [ngClass]="getStatusClass(row.statusEnum)">
+            {{ row.estado }}
+          </span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="acciones">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let row">
+          <button
+            mat-icon-button
+            color="primary"
+            matTooltip="Editar"
+            (click)="$event.stopPropagation(); editIncapacity(row.id)"
+          >
+            <mat-icon>edit</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr
+        mat-row
+        *matRowDef="let row; columns: displayedColumns"
+        class="clickable-row"
+        (click)="goToDocuments(row)"
+        matTooltip="Ver documentos"
+      ></tr>
+
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" colspan="6">
+          No hay datos que coincidan con el filtro
+        </td>
+      </tr>
+    </table>
+
+    <mat-paginator
+      [pageSizeOptions]="[5, 10, 25]"
+      aria-label="Seleccionar página"
+    ></mat-paginator>
+  </div>
+</div>

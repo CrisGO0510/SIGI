@@ -15,6 +15,7 @@ import { HrService } from '../services/hr.services';
 import { UserResponse } from '../../auth/interfaces/user-response.interface';
 import { UserRoleEnum } from '../../auth/interfaces/user-role.enum';
 import { ToastService } from '../../../shared/components/toast/toast.services';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-hr-users',
@@ -38,6 +39,7 @@ import { ToastService } from '../../../shared/components/toast/toast.services';
 export class HrUsersComponent implements OnInit {
   private hrService = inject(HrService);
   private toast = inject(ToastService);
+  private router = inject(Router);
 
   displayedColumns: string[] = ['nombre', 'email', 'rol', 'fecha', 'acciones'];
   dataSource = new MatTableDataSource<UserResponse>([]);
@@ -131,6 +133,6 @@ export class HrUsersComponent implements OnInit {
       return;
     }
 
-
+    this.router.navigate(['/documents/viewer'], { state: { user } });
   }
 }
