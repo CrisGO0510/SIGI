@@ -20,10 +20,7 @@ export class AuthService {
   login(email: string, password: string) {
     return this.http.post<AuthResponse>(this.api, { email, password }).pipe(
       tap((response) => {
-        // Guardar token
         localStorage.setItem('access_token', response.access_token);
-
-        // Guardar usuario
         localStorage.setItem('user', JSON.stringify(response.user));
       }),
     );
@@ -55,7 +52,6 @@ export class AuthService {
       .post<AuthResponse>('http://localhost:3005/auth/register', data)
       .pipe(
         tap((response) => {
-          // Se recibe un access_token igual que en login
           localStorage.setItem('access_token', response.access_token);
           localStorage.setItem('user', JSON.stringify(response.user));
         }),

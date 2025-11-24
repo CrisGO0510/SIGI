@@ -1,34 +1,35 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Incapacity } from '../../../core/models/incapacity.model';
+import { map } from 'rxjs/operators';
 
-export interface HrDashboardStats {
-  totalPendientes: number;
-  promedioAprobacionHoras: number;
-  documentosPorValidar: number;
-  incapacidadesPorMes: { mes: string; cantidad: number }[];
-  estadosGlobales: { estado: string; cantidad: number }[];
-  rankingIncidencias: { motivo: string; cantidad: number }[];
-}
+import { Incapacity } from '../../../core/models/incapacity.model';
+import { UserResponse } from '../../auth/interfaces/user-response.interface';
+import { UsersListResponse } from '../../../core/models/user.model';
+import { AuthService } from '../../auth/auth.services';
 
 @Injectable({
   providedIn: 'root',
 })
 export class HrService {
   private http = inject(HttpClient);
+  private authService = inject(AuthService);
   private baseUrl = 'http://localhost:3005';
 
-  getDashboardStats(): Observable<HrDashboardStats> {
-    return this.http.get<HrDashboardStats>(
-      `${this.baseUrl}/analytics/rrhh/dashboard`,
-    );
+  private getHeaders(): HttpHeaders {
+    const token = this.authService.token;
+    return new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
   }
 
   getAllIncapacities(filters: any): Observable<Incapacity[]> {
     return this.http.get<Incapacity[]>(
       `${this.baseUrl}/incapacidades/admin/list`,
-      { params: filters },
+      {
+        params: filters,
+        headers: this.getHeaders(),
+      },
     );
   }
 
@@ -37,9 +38,23 @@ export class HrService {
     estado: string,
     motivoRechazo?: string,
   ): Observable<any> {
-    return this.http.patch(`${this.baseUrl}/incapacidades/${id}/estado`, {
-      estado,
-      observacion: motivoRechazo,
-    });
+    return this.http.patch(
+      `${this.baseUrl}/incapacidades/${id}/estado`,
+      {
+        estado,
+        observacion: motivoRechazo,
+      },
+      {
+        headers: this.getHeaders(),
+      },
+    );
+  }
+
+  getAllUsers(): Observable<UserResponse[]> {
+    return this.http
+      .get<UsersListResponse>(`${this.baseUrl}/users`, {
+        headers: this.getHeaders(),
+      })
+      .pipe(map((response) => response.users));
   }
 }

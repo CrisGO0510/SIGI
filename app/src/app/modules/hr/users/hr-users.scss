@@ -1,0 +1,94 @@
+.users-container {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+
+  h1 {
+    margin: 0;
+    font-weight: 300;
+  }
+  p {
+    color: #888;
+    margin-top: 4px;
+  }
+}
+
+.filters-card {
+  margin-bottom: 24px;
+
+  .filters-content {
+    display: flex;
+    gap: 16px;
+    padding: 16px;
+    flex-wrap: wrap;
+  }
+
+  .search-field {
+    flex: 2;
+    min-width: 250px;
+  }
+  .role-field {
+    flex: 1;
+    min-width: 200px;
+  }
+}
+
+.table-container {
+  border-radius: 8px;
+  overflow: hidden;
+  background: #1e1e1e;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  .avatar-icon {
+    color: #aaa;
+  }
+  .name-text {
+    font-weight: 500;
+  }
+}
+
+.role-badge {
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+
+  &.role-admin {
+    background-color: rgba(244, 67, 54, 0.15);
+    color: #f44336;
+    border: 1px solid rgba(244, 67, 54, 0.3);
+  }
+
+  &.role-rrhh {
+    background-color: rgba(255, 152, 0, 0.15);
+    color: #ff9800;
+    border: 1px solid rgba(255, 152, 0, 0.3);
+  }
+
+  &.role-empleado {
+    background-color: rgba(33, 150, 243, 0.15);
+    color: #2196f3;
+    border: 1px solid rgba(33, 150, 243, 0.3);
+  }
+}
+
+.empty-state {
+  text-align: center;
+  padding: 24px;
+  color: #777;
+  font-style: italic;
+}
