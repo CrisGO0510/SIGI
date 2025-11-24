@@ -4,6 +4,12 @@ import { tap } from 'rxjs/operators';
 import { AuthResponse } from './interfaces/auth-response.interface';
 import { RegisterRequest } from './interfaces/register-request.interface';
 import { UserResponse } from './interfaces/user-response.interface';
+import { Observable } from 'rxjs';
+
+export interface CompanySelectOption {
+  id: string;
+  nombre: string;
+}
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -54,5 +60,11 @@ export class AuthService {
           localStorage.setItem('user', JSON.stringify(response.user));
         }),
       );
+  }
+
+  getCompanies(): Observable<CompanySelectOption[]> {
+    return this.http.get<CompanySelectOption[]>(
+      'http://localhost:3005/empresas/lista',
+    );
   }
 }

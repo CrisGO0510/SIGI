@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 
@@ -9,7 +9,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { AuthService } from '../auth.services';
+import { AuthService, CompanySelectOption } from '../auth.services';
 import { RegisterRequest } from '../interfaces/register-request.interface';
 import { UserRoleEnum } from '../interfaces/user-role.enum';
 
@@ -30,7 +30,7 @@ import { UserRoleEnum } from '../interfaces/user-role.enum';
     RouterLink,
   ],
 })
-export class Register {
+export class Register implements OnInit {
   fb = inject(FormBuilder);
   router = inject(Router);
   auth = inject(AuthService);
@@ -38,6 +38,7 @@ export class Register {
   loading = false;
   errorMsg = '';
   roles = Object.values(UserRoleEnum);
+  companies: CompanySelectOption[] = [];
 
   form = this.fb.group({
     nombre: ['', Validators.required],
@@ -46,6 +47,21 @@ export class Register {
     rol: [UserRoleEnum.employment, Validators.required],
     empresa_id: ['', Validators.required],
   });
+
+  ngOnInit() {
+    this.loadCompanies();
+  }
+
+  loadCompanies() {
+    this.auth.getCompanies().subscribe({
+      next: (data) => {
+        this.companies = data;
+      },
+      error: (err) => {
+        console.error('Error cargando empresas', err);
+      },
+    });
+  }
 
   submit() {
     if (this.form.invalid || this.loading) return;
