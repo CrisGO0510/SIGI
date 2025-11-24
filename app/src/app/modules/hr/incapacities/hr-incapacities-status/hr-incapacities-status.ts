@@ -199,6 +199,6 @@ export class IncapacitiesStatus implements OnInit {
     });
   }
   goToDocuments(incapacity: Incapacity) {
-    this.router.navigate(['/documents/viewer'], { state: { incapacity } });
+    this.router.navigate(['/hr/documents'], { state: { incapacity } });
   }
 }

@@ -45,4 +45,22 @@ export class DocumentService {
       },
     );
   }
+
+  validateDocument(docId: string) {
+    return this.http.patch<DocumentFile>(
+      `${this.baseUrl}/validate/${docId}`,
+      {
+        validated: true,
+      },
+      {
+        headers: this.getHeaders(),
+      },
+    );
+  }
+
+  deleteDocument(documentId: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/${documentId}`, {
+      headers: this.getHeaders(),
+    });
+  }
 }
