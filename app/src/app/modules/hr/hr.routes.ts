@@ -24,6 +24,11 @@ export const HR_ROUTES: Routes = [
       import('./users/hr-users').then((m) => m.HrUsersComponent),
   },
   {
+    path: 'reports',
+    loadComponent: () =>
+      import('./reports/reports').then((m) => m.ReportsComponent),
+  },
+  {
     path: '',
     redirectTo: 'dashboard',
     pathMatch: 'full',

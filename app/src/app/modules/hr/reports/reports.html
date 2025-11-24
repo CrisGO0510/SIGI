@@ -1,0 +1,136 @@
+<div class="reports-container">
+  <div class="header">
+    <h1>Analítica y Reportes</h1>
+    <p>Visualización en tiempo real del estado de incapacidades.</p>
+  </div>
+
+  @if (loading) {
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <p class="loading-text">Procesando datos...</p>
+  } @else if (data) {
+    <div class="kpi-grid">
+      <mat-card class="kpi-card blue">
+        <div class="kpi-icon"><mat-icon>assignment</mat-icon></div>
+        <div class="kpi-data">
+          <span class="value">{{ data.kpis.totalIncapacidades }}</span>
+          <span class="label">Total Solicitudes</span>
+        </div>
+      </mat-card>
+
+      <mat-card class="kpi-card green">
+        <div class="kpi-icon"><mat-icon>attach_money</mat-icon></div>
+        <div class="kpi-data">
+          <span class="value">{{
+            data.kpis.montoTotal | currency: "COP" : "symbol-narrow" : "1.0-0"
+          }}</span>
+          <span class="label">Monto Solicitado</span>
+        </div>
+      </mat-card>
+
+      <mat-card class="kpi-card purple">
+        <div class="kpi-icon"><mat-icon>date_range</mat-icon></div>
+        <div class="kpi-data">
+          <span class="value">{{ data.kpis.promediosDias }} días</span>
+          <span class="label">Duración Promedio</span>
+        </div>
+      </mat-card>
+
+      <mat-card class="kpi-card orange">
+        <div class="kpi-icon"><mat-icon>thumbs_up_down</mat-icon></div>
+        <div class="kpi-data">
+          <span class="value">{{ data.kpis.tasaAprobacion }}%</span>
+          <span class="label">Tasa Aprobación</span>
+        </div>
+      </mat-card>
+    </div>
+
+    <div class="charts-grid">
+      <mat-card class="chart-card">
+        <mat-card-header>
+          <mat-card-title>Distribución por Estado</mat-card-title>
+        </mat-card-header>
+        <mat-card-content class="chart-content">
+          <canvas
+            baseChart
+            [data]="pieChartData"
+            [options]="pieChartOptions"
+            type="doughnut"
+          ></canvas>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="chart-card">
+        <mat-card-header>
+          <div class="header-trend">
+            <mat-card-title>Tendencia Mensual</mat-card-title>
+            <mat-chip-listbox>
+              <span class="trend-badge">
+                <mat-icon>{{
+                  getTrendIcon(data.tendencias.tendencia)
+                }}</mat-icon>
+                {{ data.tendencias.tendencia | titlecase }}
+              </span>
+            </mat-chip-listbox>
+          </div>
+        </mat-card-header>
+        <mat-card-content class="chart-content">
+          <canvas
+            baseChart
+            [data]="barChartData"
+            [options]="barChartOptions"
+            type="bar"
+          ></canvas>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <div class="details-grid">
+      <mat-card class="detail-card">
+        <mat-card-header>
+          <mat-card-title>Top Causas de Incapacidad</mat-card-title>
+        </mat-card-header>
+        <mat-list>
+          @for (
+            item of data.estadisticas.motivosFrecuentes;
+            track item.motivo
+          ) {
+            <mat-list-item>
+              <mat-icon matListItemIcon>local_hospital</mat-icon>
+              <div matListItemTitle>{{ item.motivo | titlecase }}</div>
+              <div matListItemLine>
+                <mat-progress-bar
+                  mode="determinate"
+                  [value]="(item.cantidad / data.kpis.totalIncapacidades) * 100"
+                ></mat-progress-bar>
+              </div>
+              <span matListItemMeta>{{ item.cantidad }}</span>
+            </mat-list-item>
+          }
+        </mat-list>
+      </mat-card>
+
+      <mat-card class="detail-card">
+        <mat-card-header>
+          <mat-card-title>Alertas Operativas</mat-card-title>
+        </mat-card-header>
+        <mat-card-content class="alerts-content">
+          <div class="alert-box warning">
+            <mat-icon>warning</mat-icon>
+            <div>
+              <strong>{{ data.alertas.pendientesRevision }}</strong>
+              <span>Solicitudes pendientes de revisión urgente</span>
+            </div>
+          </div>
+
+          <div class="alert-box info">
+            <mat-icon>info</mat-icon>
+            <div>
+              <strong>{{ data.estadisticas.pagadas }}</strong>
+              <span>Pagos procesados exitosamente</span>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  }
+</div>
