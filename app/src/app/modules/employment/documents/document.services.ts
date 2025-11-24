@@ -48,9 +48,9 @@ export class DocumentService {
 
   validateDocument(docId: string) {
     return this.http.patch<DocumentFile>(
-      `${this.baseUrl}/validate/${docId}`,
+      `${this.baseUrl}/${docId}/validacion`,
       {
-        validated: true,
+        validado: true,
       },
       {
         headers: this.getHeaders(),

@@ -113,6 +113,9 @@ export class HrDocumentsComponent implements OnInit {
     this.documentService.validateDocument(docId).subscribe({
       next: () => {
         this.toast.success('Documento validado correctamente');
+        this.documents = this.documents.map((doc) =>
+          doc.id === docId ? { ...doc, validado: true } : doc,
+        );
       },
       error: (err) => {
         console.error('Error validando documento', err);
