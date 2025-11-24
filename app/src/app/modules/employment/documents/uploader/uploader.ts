@@ -15,7 +15,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { DocumentService } from '../document.services';
-import { ToastService } from '../../../shared/components/toast/toast.services';
+import { ToastService } from '../../../../shared/components/toast/toast.services';
 
 @Component({
   selector: 'app-uploader',

@@ -2,7 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
-import { AuthService } from '../../auth/auth.services';
+import { AuthService } from '../../../auth/auth.services';
 
 @Component({
   selector: 'app-home-dashboard',

@@ -13,8 +13,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { IncapacityService } from '../incapacity.service';
-import { Incapacity } from '../../../core/models/incapacity.model';
-import { ToastService } from '../../../shared/components/toast/toast.services';
+import { ToastService } from '../../../../shared/components/toast/toast.services';
+import { Incapacity } from '../../../../core/models/incapacity.model';
 
 @Component({
   selector: 'app-incapacity-form',

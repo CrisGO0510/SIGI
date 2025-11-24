@@ -17,12 +17,9 @@ import {
   withDefaultRegisterables,
 } from 'ng2-charts';
 import { ChartConfiguration, ChartData, ChartType } from 'chart.js';
-import {
-  Incapacity,
-  IncapacityStatusEnum,
-} from '../../../core/models/incapacity.model';
 import { IncapacityService } from '../incapacity.service';
 import { Router, RouterLink } from '@angular/router';
+import { Incapacity, IncapacityStatusEnum } from '../../../../core/models/incapacity.model';
 
 @Component({
   selector: 'app-incapacities-status',

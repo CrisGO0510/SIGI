@@ -17,21 +17,21 @@ export const APP_ROUTES: Routes = [
       {
         path: 'dashboard',
         loadComponent: () =>
-          import('./modules/dashboard/home-dashboard/home-dashboard').then(
-            (m) => m.HomeDashboard,
-          ),
+          import(
+            './modules/employment/dashboard/home-dashboard/home-dashboard'
+          ).then((m) => m.HomeDashboard),
       },
       {
         path: 'incapacities',
         loadChildren: () =>
-          import('./modules/incapacities/incapacities.routes').then(
+          import('./modules/employment/incapacities/incapacities.routes').then(
             (r) => r.INCAPACITIES_ROUTES,
           ),
       },
       {
         path: 'documents',
         loadChildren: () =>
-          import('./modules/documents/document.routes').then(
+          import('./modules/employment/documents/document.routes').then(
             (r) => r.DOCUMENTS_ROUTES,
           ),
       },
