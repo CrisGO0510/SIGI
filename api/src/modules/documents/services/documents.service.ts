@@ -118,4 +118,30 @@ export class DocumentsService {
         : null,
     };
   }
+
+  /**
+   * Cambiar el estado de validación de un documento
+   */
+  async cambiarValidacion(
+    id: string,
+    validado: boolean,
+    detalleValidacion?: string,
+  ): Promise<Documento> {
+    const documento = await this.documentoRepository.findById(id);
+    
+    if (!documento) {
+      throw new NotFoundException(`Documento con ID ${id} no encontrado`);
+    }
+
+    const updated = await this.documentoRepository.update(id, {
+      validado,
+      detalle_validacion: detalleValidacion || documento.detalle_validacion,
+    });
+
+    this.logger.log(
+      `Documento ${id} ${validado ? 'validado' : 'marcado como no validado'}`,
+    );
+
+    return this.addPublicUrl(updated);
+  }
 }

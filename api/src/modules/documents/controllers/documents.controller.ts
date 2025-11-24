@@ -10,6 +10,8 @@ import {
   ParseFilePipe,
   MaxFileSizeValidator,
   FileTypeValidator,
+  Patch,
+  UseGuards,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import {
@@ -22,7 +24,11 @@ import {
 } from '@nestjs/swagger';
 import { DocumentsService } from '../services/documents.service';
 import { UploadDocumentoDto } from '../dtos/upload-documento.dto';
+import { CambiarValidacionDto } from '../dtos/cambiar-validacion.dto';
 import { CurrentUser } from '../../../common/decorators';
+import { RoleGuard } from '../../../common/guards';
+import { Roles } from '../../../common/decorators/roles.decorator';
+import { Rol } from '../../../database/entities/enums';
 import { Documento } from '../../../database/entities/documento.entity';
 
 @ApiTags('documents')
@@ -163,5 +169,74 @@ curl -X POST http://localhost:3005/documents/upload \\
   @ApiResponse({ status: 401, description: 'No autenticado' })
   async deleteDocumento(@Param('id') id: string): Promise<void> {
     return this.documentsService.deleteDocumento(id);
+  }
+
+  @Patch(':id/validacion')
+  @UseGuards(RoleGuard)
+  @Roles(Rol.RRHH, Rol.ADMIN)
+  @ApiOperation({
+    summary: 'Cambiar el estado de validación de un documento',
+    description: `
+**Solo accesible por RRHH y ADMIN**
+
+Permite marcar un documento como validado o no validado.
+
+**Casos de uso:**
+- Validar un documento después de revisar que cumple con los requisitos
+- Marcar como no validado si requiere correcciones
+- Agregar comentarios sobre la validación
+
+**Ejemplo con curl:**
+\`\`\`bash
+# Validar documento
+curl -X PATCH http://localhost:3005/documents/123e4567-e89b-12d3-a456-426614174000/validacion \\
+  -H "Authorization: Bearer tu-token-rrhh" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "validado": true,
+    "detalle_validacion": "Documento verificado y aprobado"
+  }'
+
+# Marcar como no validado
+curl -X PATCH http://localhost:3005/documents/123e4567-e89b-12d3-a456-426614174000/validacion \\
+  -H "Authorization: Bearer tu-token-rrhh" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "validado": false,
+    "detalle_validacion": "Falta firma del médico"
+  }'
+\`\`\`
+    `,
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Estado de validación actualizado exitosamente',
+    schema: {
+      example: {
+        id: '123e4567-e89b-12d3-a456-426614174000',
+        incapacidad_id: '987e6543-e21b-45c6-a789-123456789abc',
+        nombre_archivo: 'incapacidad.pdf',
+        formato: 'PDF',
+        tamano_bytes: 245678,
+        storage_path: 'incapacidades/1732198765432-abc123def456.pdf',
+        url_publica: 'https://cioybkbaeldkzuunvxlt.supabase.co/storage/v1/object/public/documentos/incapacidades/1732198765432-abc123def456.pdf',
+        fecha_subida: '2024-11-21T10:30:00.000Z',
+        validado: true,
+        detalle_validacion: 'Documento verificado y aprobado',
+      },
+    },
+  })
+  @ApiResponse({ status: 401, description: 'No autenticado' })
+  @ApiResponse({ status: 403, description: 'No autorizado - Requiere rol RRHH o ADMIN' })
+  @ApiResponse({ status: 404, description: 'Documento no encontrado' })
+  async cambiarValidacion(
+    @Param('id') id: string,
+    @Body() dto: CambiarValidacionDto,
+  ): Promise<any> {
+    return this.documentsService.cambiarValidacion(
+      id,
+      dto.validado,
+      dto.detalle_validacion,
+    );
   }
 }
